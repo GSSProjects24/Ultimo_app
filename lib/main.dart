@@ -1,8 +1,6 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:imin_printer/imin_printer.dart';
-import 'package:imin_printer_example/pages/v1/home.dart';
-import 'package:imin_printer_example/pages/v2/home.dart';
 
 import 'Routes/route.dart';
 import 'Routes/route_manager.dart';
@@ -50,4 +48,4 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
-// home: NewHome(),
+// home: NewHome(),,,
