@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "426963760095",
+    "project_id": "ultimo-e3c28",
+    "storage_bucket": "ultimo-e3c28.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:426963760095:android:b4be483e16d962d57e8a6a",
+        "android_client_info": {
+          "package_name": "com.example.ultimo"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAxBzO7j9hqARutf_DhBY5FD4DLd8jx4mI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
