@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../Routes/route.dart';
 import '../../../pages/v2/transaction_print.dart';
@@ -35,28 +36,30 @@ class _HeadSectionState extends State<HeadSection> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Image.asset('images/logo_black.png', height: 90),
-                Card(
-                  color: whiteColor,
-                  child: IconButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, ValetParkingRoutes.reportRoute);
-                    },
-                    icon: const Icon(Icons.insert_chart),
-                  ),
-                ),
-                Card(
-                  color: whiteColor,
-                  child: IconButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => TransactionPrintPage()),
-                      );
 
-                    },
-                    icon: const Icon(Icons.print),
-                  ),
-                )
+                Row(
+                  children: [
+                    Card(
+                      color: whiteColor,
+                      child: IconButton(
+                        onPressed: () {
+                          Navigator.pushNamed(context, ValetParkingRoutes.reportRoute);
+                        },
+                        icon: const Icon(Icons.insert_chart),
+                      ),
+                    ),
+                    Card(
+                      color: whiteColor,
+                      child: IconButton(
+                        onPressed: () {
+                          logoutUser(context);
+                        },
+                        icon: const Icon(Icons.logout_sharp),
+                      ),
+                    )
+                  ],
+                ),
+
               ],
             ),
             verticalSpace(height: size.height * 0.01),
@@ -66,44 +69,44 @@ class _HeadSectionState extends State<HeadSection> {
               children: [
                 Expanded(
                   child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(25),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.1),
-                          blurRadius: 5,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: TextFormField(
-                      controller: widget.searchController,
-                      onChanged: (value) {
-                        widget.onSearch(value);
-                        setState(() {}); // Update UI to show/hide clear button
-                      },
-                      cursorColor: widget.searchController.text.isEmpty ? Colors.transparent : Colors.black, // Hide cursor when empty
-                      decoration: InputDecoration(
-                        hintText: 'Search for Car Number...',
-                        hintStyle: const TextStyle(color: Colors.grey),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(25),
-                          borderSide: BorderSide.none,
-                        ),
-                        contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
-                        suffixIcon: widget.searchController.text.isNotEmpty
-                            ? IconButton(
-                          icon: const Icon(Icons.clear, color: Colors.grey),
-                          onPressed: () {
-                            widget.searchController.clear();
-                            widget.onSearch('');
-                            setState(() {}); // Update UI
-                          },
-                        )
-                            : null,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(25),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.1),
+                            blurRadius: 5,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
                       ),
-                    )
+                      child: TextFormField(
+                        controller: widget.searchController,
+                        onChanged: (value) {
+                          widget.onSearch(value);
+                          setState(() {}); // Update UI to show/hide clear button
+                        },
+                        cursorColor: widget.searchController.text.isEmpty ? Colors.transparent : Colors.black, // Hide cursor when empty
+                        decoration: InputDecoration(
+                          hintText: 'Search for Car Number...',
+                          hintStyle: const TextStyle(color: Colors.grey),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(25),
+                            borderSide: BorderSide.none,
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 20),
+                          suffixIcon: widget.searchController.text.isNotEmpty
+                              ? IconButton(
+                            icon: const Icon(Icons.clear, color: Colors.grey),
+                            onPressed: () {
+                              widget.searchController.clear();
+                              widget.onSearch('');
+                              setState(() {}); // Update UI
+                            },
+                          )
+                              : null,
+                        ),
+                      )
 
                   ),
                 ),
@@ -131,6 +134,12 @@ class _HeadSectionState extends State<HeadSection> {
         ),
       ),
     );
+  }
+
+  Future<void> logoutUser(BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.clear(); // Clear all stored preferences
+    Navigator.pushReplacementNamed(context, ValetParkingRoutes.loginRoute);
   }
 }
 

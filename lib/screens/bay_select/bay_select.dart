@@ -47,10 +47,36 @@ class _ParkingBayScreenState extends State<ParkingBayScreen> {
             return const Center(child: CircularProgressIndicator(color: appPrimaryColor));
           }
           if (!snapshot.hasData || !snapshot.data!.exists) {
-            return const Center(
-              child: Text(
-                "No Available Bay",
-                style: TextStyle(color: whiteColor, fontSize: 18, fontWeight: FontWeight.bold),
+            return  Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 300,),
+                  const Text(
+                    "No Available Bay",
+                    style: TextStyle(
+                      color: whiteColor,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const Spacer(),
+                  if (widget.pageType == "primary")
+                    Align(
+                      alignment: Alignment.bottomRight,
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 16.0, bottom: 16.0),
+                        child: InkWell(
+                          onTap: () =>   Navigator.pushNamed(context, ValetParkingRoutes.userListRoute,arguments: {"carNo":widget.carNo,"pageType":"primary","location":widget.locationName}),
+                          child: Text(
+                            "Skip <<<",
+                            style: MyTextStyle.f16(appPrimaryColor, weight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
               ),
             );
           }
@@ -72,13 +98,38 @@ class _ParkingBayScreenState extends State<ParkingBayScreen> {
           }
 
           return availableSlots.isEmpty || availableSlots.length == bookedSlots.length
-              ? const Center(
-            child: Text(
-              "No Available Bay",
-              style: TextStyle(color: whiteColor, fontSize: 18, fontWeight: FontWeight.bold),
+              ?  Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const SizedBox(height: 300,),
+                const Text(
+                  "No Available Bay",
+                  style: TextStyle(
+                    color: whiteColor,
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const Spacer(),
+                if (widget.pageType == "primary")
+                  Align(
+                    alignment: Alignment.bottomRight,
+                    child: Padding(
+                      padding: const EdgeInsets.only(right: 16.0, bottom: 16.0),
+                      child: InkWell(
+                        onTap: () =>   Navigator.pushNamed(context, ValetParkingRoutes.userListRoute,arguments: {"carNo":widget.carNo,"pageType":"primary","location":widget.locationName}),
+                        child: Text(
+                          "Skip <<<",
+                          style: MyTextStyle.f16(appPrimaryColor, weight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
             ),
-          )
-              : Column(
+          ): Column(
             children: [
               Expanded(
                 child: GridView.builder(
@@ -205,7 +256,7 @@ class _ParkingBayScreenState extends State<ParkingBayScreen> {
                             }
                           }
                           if( widget.pageType == "primary")
-                            Navigator.pushNamed(context, ValetParkingRoutes.userListRoute,arguments: {"carNo":widget.carNo,"pageType":"primary"});
+                            Navigator.pushNamed(context, ValetParkingRoutes.userListRoute,arguments: {"carNo":widget.carNo,"pageType":"primary","location":widget.locationName});
                           else{
                             Navigator.pop(context);
                           }

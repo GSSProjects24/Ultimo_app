@@ -26,9 +26,9 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
   bool isLoading = false;
   String? selectedKeyHolder;
   String? selectedLocation;
-  String? selectedChargeBay;
+  List<String>? selectedChargeBay;
   String? amount;
-
+  String? selectedChargeBayOption;
   BookingType? selectedBookingType;
 
   @override
@@ -46,15 +46,16 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
         locations = snapshot.docs;
         if (locations.isNotEmpty) {
           selectedLocation = locations.first.data()['name'];
-          selectedChargeBay = locations.first.data()['chargeBay'];
+          selectedChargeBay = List<String>.from(locations.first.data()['chargeBay']);
           amount = locations.first.data()['price'];
-          updateBookingType(selectedChargeBay);
+          updateBookingType(selectedChargeBay?.first);
         }
       });
     } catch (e) {
       print("Error fetching locations: $e");
     }
   }
+
 
   void updateBookingType(String? chargeBay) {
     if (chargeBay != null) {
@@ -67,6 +68,7 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
       }
     }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -153,13 +155,12 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
                               onChanged: (value) {
                                 setState(() {
                                   selectedLocation = value!;
-                                  selectedChargeBay = locations
-                                      .firstWhere((loc) => loc["name"] == value)["chargeBay"];
-                                  selectedKeyHolder = null;
+                                  var selectedLocationData = locations.firstWhere((loc) => loc["name"] == value);
+                                  selectedChargeBay = List<String>.from(selectedLocationData["chargeBay"]);
+                                  selectedBookingType = null;
                                 });
-
-                                setState(() {});
                               },
+
 
                             ),
                           ),
@@ -170,7 +171,7 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
                 ),
               ),
               verticalSpace(height: size.height * 0.025),
-              CustomTextField(hintText: "Car Number", controller: carNo),
+              CustomTextField(hintText: "Car Number", controller: carNo,textCapitalization: TextCapitalization.characters,),
               verticalSpace(height: size.height * 0.025),
               CustomTextField(hintText: "Mobile Number", controller: mobileNo,keyboardType: TextInputType.number,),
               verticalSpace(height: size.height * 0.02),
@@ -188,52 +189,23 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
               Text("Charge Bay", style: MyTextStyle.f18(whiteColor)),
               verticalSpace(height: size.height * 0.03),
               if (selectedChargeBay != null) ...[
-                TextFormField(
-                  readOnly: true,
-                  style: const TextStyle(color: whiteColor),
-                  decoration: InputDecoration(
-                    hintText:" $selectedChargeBay",
-                    hintStyle: const TextStyle(color: whiteColor54),
-                    filled: true,
-                    fillColor: appTextFormColor,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: Colors.white70, width: 1.5),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: const BorderSide(color: Colors.white70, width: 1.5),
-                    ),
-                  ),
+                Column(
+                  children: selectedChargeBay!.map((chargeBay) {
+                    return RadioListTile<String>(
+                      title: Text(chargeBay, style: TextStyle(color: Colors.white)),
+                      value: chargeBay,
+                      groupValue: selectedChargeBayOption, // Use new variable here
+                      onChanged: (value) {
+                        setState(() {
+                          selectedChargeBayOption = value;
+                          updateBookingType(value); // Update BookingType based on selected charge bay
+                        });
+                      },
+                      activeColor: appPrimaryColor,
+                    );
+                  }).toList(),
                 ),
-                // RadioListTile<BookingType>(
-                //   title: const Text("Hour", style: TextStyle(color: Colors.white)),
-                //   value: BookingType.hourWise,
-                //   groupValue: selectedBookingType,
-                //   onChanged: selectedChargeBay!.toLowerCase().contains("hour")
-                //       ? (BookingType? value) {
-                //     setState(() {
-                //       selectedBookingType = value;
-                //     });
-                //   }
-                //       : null,
-                //   activeColor: appPrimaryColor,
-                // ),
-                // RadioListTile<BookingType>(
-                //   title: const Text("Day", style: TextStyle(color: Colors.white)),
-                //   value: BookingType.dayWise,
-                //   groupValue: selectedBookingType,
-                //   onChanged: selectedChargeBay!.toLowerCase().contains("day")
-                //       ? (BookingType? value) {
-                //     setState(() {
-                //       selectedBookingType = value;
-                //     });
-                //   }
-                //       : null,
-                //   activeColor: appPrimaryColor,
-                // ),
               ],
-
               verticalSpace(height: size.height * 0.05),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -257,7 +229,12 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
                     );
                     return;
                   }
-
+                  if (selectedChargeBayOption== null ) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Please select a charge bay"))
+                    );
+                    return;
+                  }
                   if (selectedLocation == null) {
                     ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text("Please select a location"))
@@ -267,7 +244,7 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
 
                   debugPrint('key value : ${selectedKeyHolder == "No Available Holder" ? "No Available Holder" : selectedKeyHolder}');
                   setState(() {
-                    isLoading = true; // Start loading
+                    isLoading = true;
                   });
 
                   try {
@@ -289,14 +266,14 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
                       return;
                     }
                     SharedPreferences prefs = await SharedPreferences.getInstance();
-                   String? username = prefs.getString('perfs');
+                    String? username = prefs.getString('perfs');
                     // Step 2: Prepare Booking Data
                     Map<String, dynamic> bookingData = {
                       "location": selectedLocation,
                       "carNumber": carNo.text,
                       "mobileNumber": mobileNo.text,
                       "keyHolder": selectedKeyHolder == "No Available Holder" ? "" : selectedKeyHolder,
-                      "chargeBay": selectedChargeBay,
+                      "chargeBay": selectedChargeBayOption,
                       "checkIn": FieldValue.serverTimestamp(),
                       "amount": amount,
                       "slot": "",

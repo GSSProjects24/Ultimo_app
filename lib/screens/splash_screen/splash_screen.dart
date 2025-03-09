@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_swipe_button/flutter_swipe_button.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../Routes/route.dart';
 import '../../reusable/color.dart';
 import '../../reusable/space.dart';
@@ -25,9 +26,20 @@ class _SwipeToSignInScreenState extends State<SwipeToSignInScreen> {
       isSwipeComplete = true;
     });
 
+    await Future.delayed(const Duration(milliseconds: 500));
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? user = prefs.getString('perfs');
+
     await Future.delayed(const Duration(seconds: 1));
-    Navigator.pushReplacementNamed(context,ValetParkingRoutes.loginRoute);
+
+    if (user != null) {
+      Navigator.pushReplacementNamed(context, ValetParkingRoutes.homeRoute);
+    } else {
+      Navigator.pushReplacementNamed(context, ValetParkingRoutes.loginRoute);
+    }
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +54,7 @@ class _SwipeToSignInScreenState extends State<SwipeToSignInScreen> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 45,),
               child: Hero(
-                tag: "logo",
+                  tag: "logo",
                   child: Image.asset('images/logo_black.png')),
             ),
             verticalSpace(height:size.height*0.15 ),
@@ -73,8 +85,8 @@ class _SwipeToSignInScreenState extends State<SwipeToSignInScreen> {
                       transitionBuilder: (child, animation) =>
                           ScaleTransition(scale: animation, child: child),
                       child: isSwipeComplete
-                          ? const Icon(Icons.check, size: 28, color: Colors.white, key: ValueKey("tick")) // ✅ Tick Icon with white color
-                          : const Icon(Icons.arrow_forward_ios, size: 24, color: Colors.black, key: ValueKey("slide")), // ➡ Slide Icon with black color
+                          ? const Icon(Icons.check, size: 28, color: Colors.white, key: ValueKey("tick"))
+                          : const Icon(Icons.arrow_forward_ios, size: 24, color: Colors.black, key: ValueKey("slide")),
                     ),
                   ),
                 ),

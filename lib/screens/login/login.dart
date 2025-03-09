@@ -40,10 +40,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
         if (userData['password'] == enteredPassword) {
 
-            String userName = userData['name'];
-            SharedPreferences prefs = await SharedPreferences.getInstance();
-            await prefs.setString('perfs', userName);
-            Navigator.pushReplacementNamed(context, ValetParkingRoutes.homeRoute);
+          String userName = userData['name'];
+          SharedPreferences prefs = await SharedPreferences.getInstance();
+          await prefs.setString('perfs', userName);
+          Navigator.pushReplacementNamed(context, ValetParkingRoutes.homeRoute);
         } else {
           showSnackbar("Invalid Password!");
         }
@@ -110,9 +110,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 verticalSpace(height: size.height * 0.04),
                 CustomTextField(
-                  hintText: "Email",
-                  controller: email,
-                  validator: emailValidator,
+                    hintText: "Email",
+                    controller: email,
+                    validator: emailValidator,
                     keyboardType: TextInputType.emailAddress
                 ),
                 verticalSpace(height: size.height * 0.025),

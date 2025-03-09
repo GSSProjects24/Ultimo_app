@@ -24,7 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String? username;
   List<Map<String, dynamic>> parkingList = [];
   String? selectedSlot;
-  bool isLoading = true; 
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -196,10 +196,12 @@ class _HomeScreenState extends State<HomeScreen> {
                               );
                             }
 
+
                             List<Map<String, dynamic>> filteredList = streamSnapshot.data!.docs.map((doc) {
                               var data = doc.data() as Map<String, dynamic>;
                               DateTime checkInDate = data['checkIn'].toDate().toLocal();
                               String formattedDate = DateFormat('dd-MM-yyyy').format(checkInDate);
+
                               return {
                                 'carNo': data['carNumber'] ?? 'Unknown',
                                 'mobileNo': data['mobileNumber'] ?? 'N/A',
@@ -212,6 +214,11 @@ class _HomeScreenState extends State<HomeScreen> {
                                 'jockey': data['jockey'] ?? '',
                                 'chargeBay': data['chargeBay'] ?? '',
                               };
+                            }).toList();
+
+                            // **Apply search filtering here**
+                            filteredList = filteredList.where((car) {
+                              return car['carNo'].toLowerCase().contains(searchQuery.toLowerCase());
                             }).toList();
 
                             return GridView.builder(

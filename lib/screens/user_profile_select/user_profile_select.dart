@@ -20,7 +20,7 @@ class UserListScreen extends StatefulWidget {
 
 class _UserListScreenState extends State<UserListScreen> {
   int? _selectedIndex;
-
+  List<Map<String, dynamic>> users = [];
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -46,12 +46,46 @@ class _UserListScreenState extends State<UserListScreen> {
             return const Center(child: CircularProgressIndicator(color: appPrimaryColor));
           }
           if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return const Center(
-              child: Text("No Jockey Profiles Found", style: TextStyle(color: whiteColor, fontSize: 18, fontWeight: FontWeight.bold)),
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  const SizedBox(height: 300,),
+                  const Text(
+                    "No Jockey Profiles Found",
+                    style: TextStyle(
+                      color: whiteColor,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const Spacer(),
+                  if (widget.pageType == "primary")
+                    Align(
+                      alignment: Alignment.bottomRight,
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 16.0, bottom: 16.0),
+                        child: InkWell(
+                          onTap: () => Navigator.pushNamedAndRemoveUntil(
+                            context,
+                            ValetParkingRoutes.homeRoute,
+                                (route) => false,
+                          ),
+                          child: Text(
+                            "Skip <<<",
+                            style: MyTextStyle.f16(appPrimaryColor, weight: FontWeight.bold),
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
             );
           }
 
-          var users = snapshot.data!.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
+
+          users = snapshot.data!.docs.map((doc) => doc.data() as Map<String, dynamic>).toList();
 
           return Column(
             children: [
@@ -87,20 +121,20 @@ class _UserListScreenState extends State<UserListScreen> {
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                            CircleAvatar(
-                            radius: 42,
-                            child: ClipOval( // ✅ Ensures the image stays within the circle
-                              child: ImageNetwork(
-                                image: users[index]["image"] ?? "",
-                                height: 84, // Adjusted to fit inside the CircleAvatar
-                                width: 84,
-                                curve: Curves.easeIn,
-                                fitWeb: BoxFitWeb.cover,
-                                fitAndroidIos: BoxFit.cover,
-                                onError: const Icon(Icons.person, color: blackColor, size: 40),
+                              CircleAvatar(
+                                radius: 42,
+                                child: ClipOval( // ✅ Ensures the image stays within the circle
+                                  child: ImageNetwork(
+                                    image: users[index]["image"] ?? "",
+                                    height: 84, // Adjusted to fit inside the CircleAvatar
+                                    width: 84,
+                                    curve: Curves.easeIn,
+                                    fitWeb: BoxFitWeb.cover,
+                                    fitAndroidIos: BoxFit.cover,
+                                    onError: const Icon(Icons.person, color: blackColor, size: 40),
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
                               const SizedBox(height: 12),
                               Text(
                                 users[index]["name"] ?? "Unknown",
@@ -144,8 +178,7 @@ class _UserListScreenState extends State<UserListScreen> {
   }
 
   Future<void> _updateUserProfile() async {
-    String selectedUserProfile = FirebaseFirestore.instance.collection('userprofile').doc().id;
-
+    String selectedJockeyName = users[_selectedIndex!]["name"] ?? "Unknown";
     QuerySnapshot bookingSnapshot = await FirebaseFirestore.instance
         .collection("bookings")
         .where("carNumber", isEqualTo: widget.carNo)
@@ -153,7 +186,7 @@ class _UserListScreenState extends State<UserListScreen> {
 
     if (bookingSnapshot.docs.isNotEmpty) {
       String bookingId = bookingSnapshot.docs.first.id;
-      await FirebaseFirestore.instance.collection("bookings").doc(bookingId).update({"jockey": selectedUserProfile});
+      await FirebaseFirestore.instance.collection("bookings").doc(bookingId).update({"jockey": selectedJockeyName});
       if (widget.pageType == "primary") {
         _showBookingSuccessDialog(MediaQuery.of(context).size);
       } else {

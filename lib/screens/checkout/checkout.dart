@@ -76,7 +76,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
   double calculateTotalAmount() {
     double rate = double.tryParse(widget.amount) ?? 0.0;
 
-    if (widget.chargeBay == "Hours") {
+    if (widget.chargeBay == "Hour") {
       DateTime checkIn = DateFormat('HH:mm').parse(widget.bookingTime);
       DateTime checkOut = DateFormat('HH:mm').parse(widget.checkoutTime);
       Duration difference = checkOut.difference(checkIn);
@@ -94,7 +94,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
 
   /// Calculate total hours or days
   String calculateTotalHours() {
-    if (widget.chargeBay == "Hours") {
+    if (widget.chargeBay == "Hour") {
       DateTime checkIn = DateFormat('HH:mm').parse(widget.bookingTime);
       DateTime checkOut = DateFormat('HH:mm').parse(widget.checkoutTime);
       Duration difference = checkOut.difference(checkIn);
@@ -131,7 +131,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         'totalHours': totalHours,
       });
 
-     ///key holder Update
+      ///key holder Update
       DocumentReference keyHolderDocRef = FirebaseFirestore.instance
           .collection("key_holders")
           .doc(widget.location);
@@ -161,7 +161,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         }
       }
 
-    ///Slot Update
+      ///Slot Update
       DocumentReference slotDocRef = FirebaseFirestore.instance
           .collection("slots")
           .doc(widget.location);
@@ -220,7 +220,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       body: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (widget.chargeBay == "Hours")
+          if (widget.chargeBay == "Hour")
             Padding(
               padding: const EdgeInsets.all(30.0),
               child: TimeSelection(bookingTime: widget.bookingTime, checkoutTime: widget.checkoutTime,totalHours: calculateTotalHours(),),
