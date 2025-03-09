@@ -414,7 +414,7 @@ class _ValetParkingReportPageState extends State<ValetParkingReportPage> {
             Align(
               alignment: Alignment.centerLeft,
               child: ElevatedButton.icon(
-                onPressed: () => _printBooking(booking, index), // Call print function
+                onPressed: () => _printBooking(booking,index), // Call print function
                 icon: Icon(Icons.print, color: Colors.white),
                 label: Text("Print", style: MyTextStyle.f14(whiteColor)),
                 style: ElevatedButton.styleFrom(

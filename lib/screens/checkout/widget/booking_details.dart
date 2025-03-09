@@ -50,3 +50,56 @@ class BookingDetails extends StatelessWidget {
     );
   }
 }
+class BookingDetailsModel {
+  final String carNumber;
+  final String mobileNumber;
+  final String parkingSlot;
+  final String keyHolder;
+  final String bookingDate;
+  final String checkoutDate;
+  final String amount;
+  final String totalAmount;
+  final String location;
+
+  BookingDetailsModel({
+    required this.carNumber,
+    required this.mobileNumber,
+    required this.parkingSlot,
+    required this.keyHolder,
+    required this.bookingDate,
+    required this.checkoutDate,
+    required this.amount,
+    required this.totalAmount,
+    required this.location,
+  });
+
+  // Convert JSON to BookingDetails
+  factory BookingDetailsModel.fromJson(Map<String, dynamic> json) {
+    return BookingDetailsModel(
+      carNumber: json['carNumber'] ?? '',
+      mobileNumber: json['mobileNumber'] ?? '',
+      parkingSlot: json['parkingSlot'] ?? '',
+      keyHolder: json['keyHolder'] ?? '',
+      bookingDate: json['bookingDate'] ?? '',
+      checkoutDate: json['checkoutDate'] ?? '',
+      amount: (json['amount'] ?? 0).toDouble(),
+      totalAmount: (json['totalAmount'] ?? 0).toDouble(),
+      location: json['location'] ?? '',
+    );
+  }
+
+  // Convert BookingDetails to JSON
+  Map<String, dynamic> toJson() {
+    return {
+      'carNumber': carNumber,
+      'mobileNumber': mobileNumber,
+      'parkingSlot': parkingSlot,
+      'keyHolder': keyHolder,
+      'bookingDate': bookingDate,
+      'checkoutDate': checkoutDate,
+      'amount': amount,
+      'totalAmount': totalAmount,
+      'location': location,
+    };
+  }
+}

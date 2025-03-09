@@ -84,8 +84,18 @@ class RouteManager {
         final location = args['location'] as String;
         return InstantPageRoute(page:  UserListScreen(carNo: carNo,pageType: pageType,location: location,));
 
-      case ValetParkingRoutes.qrRoute:
-        return InstantPageRoute(page:  QRScreen());
+      // case ValetParkingRoutes.qrRoute:
+      //   return InstantPageRoute(page:  QRScreen());
+      // case ValetParkingRoutes.qrRoute:
+      //   final args = settings.arguments as Map<String, dynamic>;
+      //   return InstantPageRoute(page: QRScreen(
+      //     carNumber: args['carNumber'],
+      //     mobileNumber: args['mobileNumber'],
+      //     parkingSlot:  args['parkingSlot'],
+      //     keyHolder: args['keyHolder'],
+      //     bookingDate:  args['bookingDate'],
+      //     checkoutDate:  args['checkoutDate'],
+      //     amount:  args['amount'], totalAmount: args['totalAmount'], location:  args['location'],));
 
         case ValetParkingRoutes.keyHolderRoute:
           final args = settings.arguments as Map<String, dynamic>;

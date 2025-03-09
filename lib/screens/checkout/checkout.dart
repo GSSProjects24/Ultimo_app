@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:imin_printer_example/screens/checkout/widget/booking_details.dart';
 import 'package:imin_printer_example/screens/checkout/widget/time_selection.dart';
+import 'package:imin_printer_example/screens/qr/qr.dart';
 import 'package:intl/intl.dart';
 
 import '../../Routes/route.dart';
@@ -187,9 +188,49 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           }
           await slotDocRef.update({"slots": slotList});
           print("Slot availability updated successfully.");
+          print('carNumber' '${widget.carNumber}');
+          print('carNumber' '${widget.amount}');
         }
       }
-      Navigator.pushNamed(context, ValetParkingRoutes.qrRoute);
+      // Navigator.pushNamed(
+      //   context,
+      //   ValetParkingRoutes.qrRoute,
+      //   arguments: {
+      //     'carNumber': widget.carNumber,
+      //     'bookingDate': widget.bookingDate,
+      //     'mobileNumber': widget.mobileNumber,
+      //     'parkingSlot': widget.parkingSlot,
+      //     'keyHolder': widget.keyHolder,
+      //     'bookingTime': widget.bookingTime,
+      //     'checkoutTime': widget.checkoutTime,
+      //     'checkoutDate': widget.checkoutDate,
+      //     'amount': widget.amount,
+      //     'chargeBay': widget.chargeBay,
+      //     'location': widget.location,
+      //   },
+      // );
+      // Create an instance of BookingDetailsModel before navigating
+      BookingDetailsModel bookingDetail = BookingDetailsModel(
+        carNumber: widget.carNumber,
+        mobileNumber:widget.mobileNumber,
+        parkingSlot: widget.parkingSlot,
+        keyHolder:  widget.keyHolder,
+        bookingDate:  widget.bookingDate,
+        checkoutDate:  widget.checkoutDate,
+        amount: widget.amount,
+        totalAmount:  widget.amount,
+        location: widget.location,
+      );
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => QRScreen(bookingDetail: bookingDetail),
+        ),
+      );
+
+// Navigator.push(context, MaterialPageRoute(builder: (context)=>QRScreen(bookingDetail: bookingDetail)));
+
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Error updating booking: $e")),

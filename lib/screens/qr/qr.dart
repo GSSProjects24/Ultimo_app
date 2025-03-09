@@ -4,8 +4,33 @@ import '../../reusable/color.dart';
 import '../../reusable/space.dart';
 import '../../reusable/text_style.dart';
 import '../../Routes/route.dart';
+import '../checkout/widget/booking_details.dart';
+import '../printer/Bookingdetail_print.dart';
 
 class QRScreen extends StatefulWidget {
+  // final String? carNumber;
+  // final String? mobileNumber;
+  // final String? parkingSlot;
+  // final String? bookingDate;
+  // final String? checkoutDate;
+  // final String? keyHolder;
+  // final String? amount;
+  // final String? totalAmount;
+  // final String? location;
+  //
+  // QRScreen({
+  //   required this.carNumber,
+  //   required this.mobileNumber,
+  //   required this.parkingSlot,
+  //   required this.keyHolder,
+  //   required this.bookingDate,
+  //   required this.checkoutDate,
+  //   required this.amount,
+  //   required this.totalAmount,
+  //   required this.location,
+  // });
+  final BookingDetailsModel bookingDetail;
+  const QRScreen({Key? key, required this.bookingDetail}) : super(key: key);
   @override
   _QRScreenState createState() => _QRScreenState();
 }
@@ -18,7 +43,8 @@ class _QRScreenState extends State<QRScreen> {
   @override
   void initState() {
     super.initState();
-    fetchPaymentMethods(); // Fetch payment methods on screen load
+    fetchPaymentMethods();
+   // Fetch payment methods on screen load
   }
 
   Future<void> fetchPaymentMethods() async {
@@ -174,6 +200,8 @@ class _QRScreenState extends State<QRScreen> {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
+                      _printBookingdetail(widget.bookingDetail,context);
+                      // print("----------${widget.carNumber}");
                       Navigator.pushNamedAndRemoveUntil(
                           context, ValetParkingRoutes.homeRoute, (route) => false);
                     },
@@ -193,5 +221,14 @@ class _QRScreenState extends State<QRScreen> {
         ],
       ),
     );
+  }
+  // late final BookingDetails bookingDetail; // Ensure this is passed in constructor
+
+  final bookingdetailtPrinter = TicketPrinter();
+  void _printBookingdetail(BookingDetailsModel bookingDetail,
+      BuildContext context) async {
+
+    await bookingdetailtPrinter.printBookingTicket(bookingDetail,context);
+
   }
 }
