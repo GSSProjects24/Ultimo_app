@@ -34,6 +34,7 @@ class TicketPrinter {
         );
         print("Ticket printed successfully!");
         print("try-------${bookingDetailsModel.bookingDate}");
+        print("try-------${bookingDetailsModel.parkingSlot}");
       } else {
         print("Failed to capture ticket image.");
         print("else-------${bookingDetailsModel.bookingDate}");
@@ -64,7 +65,7 @@ class TicketPrinter {
       );
 
       Overlay.of(context)?.insert(overlayEntry);
-      await Future.delayed(Duration(milliseconds: 500));
+      await Future.delayed(Duration(seconds: 3));
 
       RenderRepaintBoundary? boundary =
       _globalKey.currentContext?.findRenderObject() as RenderRepaintBoundary?;
@@ -95,45 +96,48 @@ class TicketPrinter {
         borderRadius: BorderRadius.circular(5),
         color: Colors.white,
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Image.asset(
-            'images/printlogo.png',
-            width: 200,
-            height: 200,
-          ),
-          SizedBox(height: 10),
-          Text("ULTIMO PARKING & VALET SERVICE",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-          Text("SDN. BHD. (Malaysia)", style: TextStyle(fontSize: 20)),
-
-          Padding(
-            padding: const EdgeInsets.all(28.0),
-            child: Column(
-              children: [
-
-                rowText("Car Number:", bookingDetail.carNumber),
-                rowText("Mobile Number:", bookingDetail.mobileNumber),
-                rowText("Parking Slot:", bookingDetail.parkingSlot),
-                rowText("Key Holder:", bookingDetail.keyHolder),
-                rowText("Amount:", "RM${bookingDetail.amount}"),
-                rowText("Check-in:", bookingDetail.bookingDate),
-                rowText("Check-out:", bookingDetail.checkoutDate),
-                rowText("Location:", bookingDetail.location),
-                rowText("Total Amount:", "RM${bookingDetail.totalAmount}"),
-              ],
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Image.asset(
+              'images/printlogo.png',
+              width: 200,
+              height: 200,
             ),
-          ),
-
-          Center(
-            child: Text(
-              "Thank you for using our service!",
-              style: TextStyle(fontSize: 20),
+            SizedBox(height: 10),
+            Text("ULTIMO PARKING & VALET SERVICE",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25)),
+            Text("SDN. BHD. (Malaysia)", textAlign: TextAlign.center, style: TextStyle(fontSize: 25)),
+        
+            Padding(
+              padding: const EdgeInsets.all(28.0),
+              child: Column(
+                children: [
+        
+                  rowText("Car Number:", bookingDetail.carNumber),
+                  rowText("Mobile Number:", bookingDetail.mobileNumber),
+                  // rowText("Parking Slot:", bookingDetail.parkingSlot),
+                  rowText("Key Holder:", bookingDetail.keyHolder),
+                  rowText("Amount:", "RM${bookingDetail.amount}"),
+                  rowText("Check-in:", bookingDetail.bookingDate),
+                  rowText("Check-out:", bookingDetail.checkoutDate),
+                  rowText("Location:", bookingDetail.location),
+                  rowText("Total Amount:", "RM${bookingDetail.totalAmount}"),
+                ],
+              ),
             ),
-          ),
-        ],
+        
+            Center(
+              child: Text(
+                "Thank you for using our service!",
+                style: TextStyle(fontSize: 20),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -142,8 +146,8 @@ class TicketPrinter {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(label, style: TextStyle(fontSize: 20)),
-        Text(value, style: TextStyle(fontSize: 20)),
+        Text(label, style: TextStyle(fontSize: 23)),
+        Text(value, style: TextStyle(fontSize: 23)),
       ],
     );
   }
@@ -152,7 +156,7 @@ class TicketPrinter {
       BuildContext context) async {
     for (int i = 0; i < bookings.length; i++) {
       await printBookingTicket(bookings[i], context);
-      await Future.delayed(Duration(seconds: 1)); // Short delay between prints
+      await Future.delayed(Duration(seconds: 10)); // Short delay between prints
     }
   }
 

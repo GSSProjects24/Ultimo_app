@@ -190,6 +190,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
           print("Slot availability updated successfully.");
           print('carNumber' '${widget.carNumber}');
           print('carNumber' '${widget.amount}');
+          print('carNumber' '${widget.parkingSlot}');
+
         }
       }
       // Navigator.pushNamed(

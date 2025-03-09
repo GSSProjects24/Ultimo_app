@@ -103,8 +103,9 @@ class ValetParkingPrinter {
           ),
           SizedBox(height: 10),
           Text("ULTIMO PARKING & VALET SERVICE",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20)),
-          Text("SDN. BHD. (Malaysia)", style: TextStyle(fontSize: 20)),
+              textAlign: TextAlign.center,
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25)),
+          Text("SDN. BHD. (Malaysia)", style: TextStyle(fontSize: 25)),
 
           // Ticket Details in Row with spaceBetween
           Padding(
@@ -114,49 +115,49 @@ class ValetParkingPrinter {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("Ticket No:", style: TextStyle(fontSize: 20)),
-                    Text("$index", style: TextStyle(fontSize: 20)),
+                    Text("Ticket No:", style: TextStyle(fontSize: 23)),
+                    Text("$index", style: TextStyle(fontSize: 23)),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("Car Number:", style: TextStyle(fontSize: 20)),
+                    Text("Car Number:", style: TextStyle(fontSize: 23)),
                     Text("${booking['carNumber'] ?? 'N/A'}"),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("Key Holder:", style: TextStyle(fontSize: 20)),
+                    Text("Key Holder:", style: TextStyle(fontSize: 23)),
                     Text("${booking['keyHolder'] ?? 'N/A'}"),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("Jockey:", style: TextStyle(fontSize: 20)),
+                    Text("Jockey:", style: TextStyle(fontSize: 23)),
                     Text("${booking['jockey'] ?? 'N/A'}"),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("Amount:", style: TextStyle(fontSize: 20)),
+                    Text("Amount:", style: TextStyle(fontSize: 23)),
                     Text("RM${booking['amount'] ?? '0.00'}"),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("Check-in:", style: TextStyle(fontSize: 20)),
+                    Text("Check-in:", style: TextStyle(fontSize: 23)),
                     Text("${booking['checkIn'] ?? 'N/A'}"),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("Check-out:", style: TextStyle(fontSize: 20)),
+                    Text("Check-out:", style: TextStyle(fontSize: 23)),
                     Text("${booking['checkout'] ?? 'Pending'}"),
                   ],
                 ),
