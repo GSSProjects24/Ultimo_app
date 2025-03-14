@@ -91,29 +91,29 @@ class _CardDesignState extends State<CardDesign> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   if( widget.keyHolder=="N/A")
-                  _iconButton(
-                    icon: Icons.vpn_key,
-                    label: "Keys",
-                    onTap: () {
-                      Navigator.pushNamed(context, ValetParkingRoutes.keyHolderRoute,arguments: {"carNo":widget.carNo,"locationName":widget.locationName});
-                    },
-                  ),
+                    _iconButton(
+                      icon: Icons.vpn_key,
+                      label: "Keys",
+                      onTap: () {
+                        Navigator.pushNamed(context, ValetParkingRoutes.keyHolderRoute,arguments: {"carNo":widget.carNo,"locationName":widget.locationName});
+                      },
+                    ),
                   if( widget.parkingSlot.isEmpty)
-                  _iconButton(
-                    icon: Icons.local_parking,
-                    label: "Bay",
-                    onTap: () {
-                      Navigator.pushNamed(context, ValetParkingRoutes.baySelectRoute,arguments: {"carNo":widget.carNo,"locationName":widget.locationName,"pageType":"secondary"});
-                    },
-                  ),
+                    _iconButton(
+                      icon: Icons.local_parking,
+                      label: "Bay",
+                      onTap: () {
+                        Navigator.pushNamed(context, ValetParkingRoutes.baySelectRoute,arguments: {"carNo":widget.carNo,"locationName":widget.locationName,"pageType":"secondary"});
+                      },
+                    ),
                   if( widget.jockey.isEmpty)
-                  _iconButton(
-                    icon: Icons.person,
-                    label: "User",
-                    onTap: () {
-                      Navigator.pushNamed(context, ValetParkingRoutes.userListRoute,arguments: {"carNo":widget.carNo,"pageType":"secondary","location":widget.locationName});
-                    },
-                  ),
+                    _iconButton(
+                      icon: Icons.person,
+                      label: "User",
+                      onTap: () {
+                        Navigator.pushNamed(context, ValetParkingRoutes.userListRoute,arguments: {"carNo":widget.carNo,"pageType":"secondary","location":widget.locationName});
+                      },
+                    ),
                 ],
               ),
               verticalSpace(height: widget.size.height * 0.01),

@@ -123,57 +123,65 @@ class ValetParkingPrinter {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text("Car Number:", style: TextStyle(fontSize: 23)),
-                    Text("${booking['carNumber'] ?? 'N/A'}"),
+                    Text("${booking['carNumber'] ?? 'N/A'}", style: TextStyle(fontSize: 23)),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text("Key Holder:", style: TextStyle(fontSize: 23)),
-                    Text("${booking['keyHolder'] ?? 'N/A'}"),
+                    Text("${booking['keyHolder'] ?? 'N/A'}", style: TextStyle(fontSize: 23)),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text("Jockey:", style: TextStyle(fontSize: 23)),
-                    Text("${booking['jockey'] ?? 'N/A'}"),
+                    Text("${booking['jockey'] ?? 'N/A'}", style: TextStyle(fontSize: 23)),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text("Amount:", style: TextStyle(fontSize: 23)),
-                    Text("RM${booking['amount'] ?? '0.00'}"),
+                    Text("RM${booking['amount'] ?? '0.00'}", style: TextStyle(fontSize: 23)),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text("Check-in:", style: TextStyle(fontSize: 23)),
-                    Text("${booking['checkIn'] ?? 'N/A'}"),
+                    Text("${booking['checkIn'] ?? 'N/A'}", style: TextStyle(fontSize: 23)),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text("Check-out:", style: TextStyle(fontSize: 23)),
-                    Text("${booking['checkout'] ?? 'Pending'}"),
+                    Text("${booking['checkout'] ?? 'Pending'}", style: TextStyle(fontSize: 23)),
+                  ],
+                ),   SizedBox(height: 10,),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("Thank you for using our service!", style: TextStyle(fontSize: 20)),
+
                   ],
                 ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text("   ", style: TextStyle(fontSize: 20)),
+
+                  ],
+                ),SizedBox(height: 10,),
               ],
             ),
           ),
 
 
 
-          // Footer Message
-          Center(
-            child: Text(
-              "Thank you for using our service!",
-              style: TextStyle(fontSize: 20),
-            ),
-          ),
+
         ],
       )
     );

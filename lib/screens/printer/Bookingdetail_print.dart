@@ -126,22 +126,28 @@ class TicketPrinter {
                   rowText("Check-out:", bookingDetail.checkoutDate),
                   rowText("Location:", bookingDetail.location),
                   rowText("Total Amount:", "RM${bookingDetail.totalAmount}"),
+                  SizedBox(height: 10,),
+                  rowTexttq("Thank you for using our service!", ),
+                  SizedBox(height: 10,),
                 ],
               ),
             ),
         
-            Center(
-              child: Text(
-                "Thank you for using our service!",
-                style: TextStyle(fontSize: 20),
-              ),
-            ),
+
           ],
         ),
       ),
     );
   }
+  Widget rowTexttq(String label) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(label, style: TextStyle(fontSize: 20)),
 
+      ],
+    );
+  }
   Widget rowText(String label, String value) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -160,5 +166,4 @@ class TicketPrinter {
     }
   }
 
-// BookingDetails class definition
 }
