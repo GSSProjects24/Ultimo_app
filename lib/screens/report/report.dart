@@ -11,7 +11,7 @@ import '../../reusable/color.dart';
 import '../../reusable/space.dart';
 import '../../reusable/text_style.dart';
 import '../printer/report_print.dart';
-
+enum FilterType { all, pending, completed }
 class ValetParkingReportPage extends StatefulWidget {
   @override
   _ValetParkingReportPageState createState() => _ValetParkingReportPageState();
@@ -27,6 +27,9 @@ class _ValetParkingReportPageState extends State<ValetParkingReportPage> {
   bool isLoading = false;
   TimeOfDay selectedStartTime = const TimeOfDay(hour: 0, minute: 0);
   TimeOfDay selectedEndTime = const TimeOfDay(hour: 23, minute: 59);
+
+
+  FilterType selectedFilter = FilterType.all;
 
   @override
   void initState() {
@@ -122,6 +125,17 @@ class _ValetParkingReportPageState extends State<ValetParkingReportPage> {
       });
     }
   }
+  List<Map<String, dynamic>> get filteredBookings {
+    if (selectedFilter == FilterType.all) {
+      return bookings;
+    } else if (selectedFilter == FilterType.pending) {
+      return bookings.where((b) => b['checkout'] == 'Pending').toList();
+    } else if (selectedFilter == FilterType.completed) {
+      return bookings.where((b) => b['checkout'] != 'Pending').toList();
+    }
+    return bookings;
+  }
+
   void _selectTime(BuildContext context, bool isStartTime) async {
     final TimeOfDay? picked = await showTimePicker(
       context: context,
@@ -140,56 +154,6 @@ class _ValetParkingReportPageState extends State<ValetParkingReportPage> {
     }
   }
 
-  // Future<void> _fetchBookings() async {
-  //   if (userProfile == null) return;
-  //   setState(() {
-  //     isLoading = true;
-  //   });
-  //   DateTime startOfDay = DateTime(selectedDate.year, selectedDate.month, selectedDate.day);
-  //   DateTime endOfDay = startOfDay.add(const Duration(days: 1));
-  //
-  //   try {
-  //     QuerySnapshot snapshot = await FirebaseFirestore.instance
-  //         .collection('bookings')
-  //         .where('userProfile', isEqualTo: userProfile)
-  //         .where("checkIn", isGreaterThanOrEqualTo: Timestamp.fromDate(startOfDay))
-  //         .where("checkIn", isLessThan: Timestamp.fromDate(endOfDay))
-  //         .get();
-  //
-  //     double total = 0.0;
-  //     List<Map<String, dynamic>> tempBookings = snapshot.docs.map((doc) {
-  //       Timestamp? checkInTimestamp = doc['checkIn'] is Timestamp ? doc['checkIn'] : null;
-  //       Timestamp? checkoutTimestamp = doc['checkout'] is Timestamp ? doc['checkout'] : null;
-  //
-  //       double amount = double.tryParse(doc['amount']?.toString() ?? '0') ?? 0;
-  //       total += amount;
-  //
-  //       return {
-  //         'carNumber': doc['carNumber'] ?? 'N/A',
-  //         'keyHolder': doc['keyHolder'] ?? 'N/A',
-  //         'jockey': doc['jockey'] ?? 'N/A',
-  //         'amount': amount.toStringAsFixed(2),
-  //         'checkIn': checkInTimestamp != null
-  //             ? DateFormat('dd-MM-yyyy hh:mm a').format(checkInTimestamp.toDate())
-  //             : 'N/A',
-  //         'checkout': checkoutTimestamp != null
-  //             ? DateFormat('dd-MM-yyyy hh:mm a').format(checkoutTimestamp.toDate())
-  //             : 'Pending',
-  //       };
-  //     }).toList();
-  //
-  //     setState(() {
-  //       bookings = tempBookings;
-  //       totalAmount = total;
-  //       isLoading = false;
-  //     });
-  //   } catch (e) {
-  //     print("Error fetching bookings: $e");
-  //     setState(() {
-  //       isLoading = false;
-  //     });
-  //   }
-  // }
 
   void _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -300,12 +264,33 @@ class _ValetParkingReportPageState extends State<ValetParkingReportPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                _summaryCard("Total Cars", totalCars.toString(), appPrimaryColor, size),
-                _summaryCard("Pending", pendingCount.toString(), Colors.orange, size),
-                _summaryCard("Completed", completedCount.toString(), Colors.green, size),
-                _summaryCard("Total Sales", "100", Colors.green, size),
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      selectedFilter = FilterType.all;
+                    });
+                  },
+                  child: _summaryCard("Total", totalCars.toString(), appPrimaryColor, size, selectedFilter == FilterType.all),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      selectedFilter = FilterType.pending;
+                    });
+                  },
+                  child: _summaryCard("Pending", pendingCount.toString(), Colors.orange, size, selectedFilter == FilterType.pending),
+                ),
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      selectedFilter = FilterType.completed;
+                    });
+                  },
+                  child: _summaryCard("Completed", completedCount.toString(), Colors.green, size, selectedFilter == FilterType.completed),
+                ),
               ],
             ),
+
             verticalSpace(height: size.height * 0.04),
             Text(
               "Parking Records",
@@ -325,10 +310,11 @@ class _ValetParkingReportPageState extends State<ValetParkingReportPage> {
                 ),
               )
                   : ListView.builder(
-                itemCount: bookings.length,
+                itemCount: filteredBookings.length,
                 itemBuilder: (context, index) {
-                  return _reportItem(bookings[index], index + 1);
+                  return _reportItem(filteredBookings[index], index + 1);
                 },
+
               ),
             ),
             Container(
@@ -341,7 +327,7 @@ class _ValetParkingReportPageState extends State<ValetParkingReportPage> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text("Total Amount", style: MyTextStyle.f16(whiteColor, weight: FontWeight.bold)),
-                  Text("RM${totalAmount.toStringAsFixed(2)}", // Use dynamic value
+                  Text("RM${totalAmount.toStringAsFixed(2)}",
                       style: MyTextStyle.f18(appPrimaryColor, weight: FontWeight.bold)),
                 ],
               ),
@@ -351,9 +337,7 @@ class _ValetParkingReportPageState extends State<ValetParkingReportPage> {
               width: double.infinity,
               child: ElevatedButton.icon(
                 onPressed: () async{
-                  //await iminPrinter.initPrinter();
                   await valetPrinter.printAllTickets(bookings, context);
-
                   //Navigator.pushNamed(context, ValetParkingRoutes.printHomeRoute);
                 },
                 icon: const Icon(Icons.print, color: whiteColor),
@@ -372,24 +356,29 @@ class _ValetParkingReportPageState extends State<ValetParkingReportPage> {
       ),
     );
   }
-  Widget _summaryCard(String title, String count, Color color, Size size) {
+  Widget _summaryCard(String title, String count, Color color, Size size, bool isSelected) {
     return Container(
-      width: size.width * 0.2,
+      width: size.width * 0.28,
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: appCardColor,
+        border: Border.all(
+          color: isSelected ? appPrimaryColor : Colors.transparent,
+          width: 2,
+        ),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(title, style: MyTextStyle.f10(whiteColor, weight: FontWeight.bold)),
+          Text(title, style: MyTextStyle.f12(whiteColor, weight: FontWeight.bold)),
           verticalSpace(height: size.height * 0.01),
           Text(count, style: MyTextStyle.f18(whiteColor, weight: FontWeight.bold)),
         ],
       ),
     );
   }
+
   Widget _reportItem(Map<String, dynamic> booking, int index) {
     return Card(
       color: appSecondaryColor.withOpacity(0.8),
@@ -414,7 +403,7 @@ class _ValetParkingReportPageState extends State<ValetParkingReportPage> {
             Align(
               alignment: Alignment.centerLeft,
               child: ElevatedButton.icon(
-                onPressed: () => _printBooking(booking,index), // Call print function
+                onPressed: () => _printBooking(booking,index),
                 icon: Icon(Icons.print, color: Colors.white),
                 label: Text("Print", style: MyTextStyle.f14(whiteColor)),
                 style: ElevatedButton.styleFrom(

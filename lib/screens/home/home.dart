@@ -207,7 +207,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 'mobileNo': data['mobileNumber'] ?? 'N/A',
                                 'parkingSlot': data['slot'] ?? 'N/A',
                                 'keyHolder': data['keyHolder']?.toString() ?? 'N/A',
-                                'startTime': DateFormat('HH:mm').format(data['checkIn'].toDate()),
+                                'startTime': DateFormat('HH:mm a').format(data['checkIn'].toDate()),
                                 'date': formattedDate,
                                 'amount': data['amount'] ?? 'RM0',
                                 'location': data['location'] ?? '',
@@ -243,7 +243,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   onCheckout: () {
                                     DateTime now = DateTime.now();
                                     String formattedDate = DateFormat('dd-MM-yyyy').format(now);
-                                    String formattedTime = DateFormat('HH:mm').format(now);
+                                    String formattedTime = DateFormat('HH:mm a').format(now);
                                     Navigator.pushNamed(
                                       context,
                                       ValetParkingRoutes.checkoutRoute,

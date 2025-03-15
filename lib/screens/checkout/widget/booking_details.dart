@@ -12,6 +12,9 @@ class BookingDetails extends StatelessWidget {
   final String amount;
   final String totalAmount;
   final String location;
+  final String checkInTime;
+  final String checkOutTime;
+  final String chargeBay;
 
   BookingDetails({
     required this.carNumber,
@@ -20,7 +23,7 @@ class BookingDetails extends StatelessWidget {
     required this.keyHolder,
     required this.bookingDate,
     required this.checkoutDate,
-    required this.amount, required this.totalAmount, required this.location,
+    required this.amount, required this.totalAmount, required this.location, required this.checkInTime, required this.checkOutTime, required this.chargeBay,
   });
 
   @override
@@ -40,7 +43,11 @@ class BookingDetails extends StatelessWidget {
           DetailRow(icon: Icons.local_parking, title: "Parking Slot:", value: "Bay $parkingSlot"),
           DetailRow(icon: Icons.vpn_key, title: "Key Holder:", value: keyHolder),
           DetailRow(icon: Icons.location_on, title: "Location:", value: location),
+          if(chargeBay =="Day")
+          DetailRow(icon: Icons.savings, title: "Booking Time:", value: checkInTime),
           DetailRow(icon: Icons.date_range, title: "Booking Date:", value: bookingDate),
+          if(chargeBay =="Day")
+          DetailRow(icon: Icons.savings, title: "Checkout Time:", value: checkOutTime),
           DetailRow(icon: Icons.calendar_today, title: "Checkout Date:", value: checkoutDate),
           DetailRow(icon: Icons.savings, title: "Amount:", value: amount),
           const Divider(color: Colors.white38, thickness: 1, height: 20),
@@ -60,8 +67,10 @@ class BookingDetailsModel {
   final String amount;
   final String totalAmount;
   final String location;
+  final String bookingTime;
+  final String checkOutTime;
 
-  BookingDetailsModel({
+  BookingDetailsModel( {
     required this.carNumber,
     required this.mobileNumber,
     required this.parkingSlot,
@@ -71,6 +80,8 @@ class BookingDetailsModel {
     required this.amount,
     required this.totalAmount,
     required this.location,
+    required this.bookingTime,
+    required this.checkOutTime,
   });
 
   // Convert JSON to BookingDetails
@@ -85,6 +96,9 @@ class BookingDetailsModel {
       amount: (json['amount'] ?? 0).toDouble(),
       totalAmount: (json['totalAmount'] ?? 0).toDouble(),
       location: json['location'] ?? '',
+      bookingTime :json['bookingTime'] ?? '',
+      checkOutTime:json['checkOutTime'] ?? '',
+
     );
   }
 
@@ -100,6 +114,8 @@ class BookingDetailsModel {
       'amount': amount,
       'totalAmount': totalAmount,
       'location': location,
+      'bookingTime':bookingTime,
+      'checkOutTime':checkOutTime
     };
   }
 }

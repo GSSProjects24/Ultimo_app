@@ -20,6 +20,7 @@ class BookingFormScreen extends StatefulWidget {
 class _BookingFormScreenState extends State<BookingFormScreen> {
   TextEditingController carNo = TextEditingController();
   TextEditingController mobileNo = TextEditingController();
+  TextEditingController countryCode = TextEditingController();
 
 
   List<QueryDocumentSnapshot<Map<String, dynamic>>> locations = [];
@@ -157,6 +158,7 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
                                   selectedLocation = value!;
                                   var selectedLocationData = locations.firstWhere((loc) => loc["name"] == value);
                                   selectedChargeBay = List<String>.from(selectedLocationData["chargeBay"]);
+                                  amount=selectedLocationData["price"];
                                   selectedBookingType = null;
                                 });
                               },
@@ -173,7 +175,29 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
               verticalSpace(height: size.height * 0.025),
               CustomTextField(hintText: "Car Number", controller: carNo,textCapitalization: TextCapitalization.characters,),
               verticalSpace(height: size.height * 0.025),
-              CustomTextField(hintText: "Mobile Number", controller: mobileNo,keyboardType: TextInputType.number,),
+              Row(
+                children: [
+                  Expanded(
+                    flex: 1,
+                    child: CustomTextField(
+                      readOnly: true,
+                      hintText: "+60",
+                      controller: countryCode,
+                      keyboardType: TextInputType.number,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    flex: 4,
+                    child: CustomTextField(
+                      hintText: "Mobile Number",
+                      controller: mobileNo,
+                      keyboardType: TextInputType.number,
+                    ),
+                  ),
+                ],
+              ),
+
               verticalSpace(height: size.height * 0.02),
               KeyHolderSection(
                 key: ValueKey(selectedLocation),
@@ -192,7 +216,7 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
                 Column(
                   children: selectedChargeBay!.map((chargeBay) {
                     return RadioListTile<String>(
-                      title: Text(chargeBay, style: TextStyle(color: Colors.white)),
+                      title: Text(chargeBay, style: const TextStyle(color: Colors.white)),
                       value: chargeBay,
                       groupValue: selectedChargeBayOption, // Use new variable here
                       onChanged: (value) {
@@ -271,7 +295,7 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
                     Map<String, dynamic> bookingData = {
                       "location": selectedLocation,
                       "carNumber": carNo.text,
-                      "mobileNumber": mobileNo.text,
+                      "mobileNumber": "+60${mobileNo.text}",
                       "keyHolder": selectedKeyHolder == "No Available Holder" ? "" : selectedKeyHolder,
                       "chargeBay": selectedChargeBayOption,
                       "checkIn": FieldValue.serverTimestamp(),

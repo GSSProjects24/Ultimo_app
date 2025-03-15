@@ -222,6 +222,8 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         amount: widget.amount,
         totalAmount:  widget.amount,
         location: widget.location,
+        bookingTime: widget.bookingTime,
+        checkOutTime: widget.checkoutTime,
       );
 
       Navigator.push(
@@ -263,7 +265,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       body: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (widget.chargeBay == "Hour")
+        if (widget.chargeBay == "Hour")
             Padding(
               padding: const EdgeInsets.all(30.0),
               child: TimeSelection(bookingTime: widget.bookingTime, checkoutTime: widget.checkoutTime,totalHours: calculateTotalHours(),),
@@ -280,7 +282,10 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
                 checkoutDate: widget.checkoutDate,
                 amount: widget.amount,
                 location:widget.location,
+                checkInTime:widget.bookingTime ,
+                checkOutTime: widget.checkoutTime,
                 totalAmount: totalAmount.toStringAsFixed(2),
+                chargeBay:widget.chargeBay ,
               ),
             ),
           ),

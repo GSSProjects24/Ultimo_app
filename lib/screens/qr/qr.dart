@@ -36,26 +36,28 @@ class QRScreen extends StatefulWidget {
 }
 
 class _QRScreenState extends State<QRScreen> {
-  String selectedQR = "images/qr.png"; // Default QR Code
-  List<Map<String, String>> paymentMethods = []; // List to store payment data
-  bool isLoading = true; // Loading state
+  String selectedQR = "images/qr.png";
+  List<Map<String, String>> paymentMethods = [];
+  bool isLoading = true;
 
   @override
   void initState() {
     super.initState();
     fetchPaymentMethods();
-   // Fetch payment methods on screen load
+
   }
 
   Future<void> fetchPaymentMethods() async {
     try {
       QuerySnapshot querySnapshot =
-      await FirebaseFirestore.instance.collection('qrCode').get();
+      await FirebaseFirestore.instance.collection('qrCode')
+          .where('location', isEqualTo: widget.bookingDetail.location)
+          .get();
 
       List<Map<String, String>> fetchedMethods = querySnapshot.docs.map((doc) {
         return {
-          "name": doc["name"]?.toString() ?? "",  // Ensure value is a string
-          "image": doc["image"]?.toString() ?? "" // Ensure value is a string
+          "name": doc["name"]?.toString() ?? "",
+          "image": doc["image"]?.toString() ?? ""
         };
       }).toList();
 
@@ -105,7 +107,8 @@ class _QRScreenState extends State<QRScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 20),
             child: Center(
               child: Container(
-                padding: const EdgeInsets.all(20),
+                width: double.infinity,
+                height: size.height * 0.58, // You can adjust height as needed
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
@@ -118,32 +121,36 @@ class _QRScreenState extends State<QRScreen> {
                   ],
                 ),
                 child: ClipRRect(
-                  borderRadius:
-                  BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(12),
                   child: Image.network(
                     selectedQR,
                     width: double.infinity,
-                    height: size.height * 0.3,
+                    height: double.infinity,
                     fit: BoxFit.contain,
                     loadingBuilder: (context, child, loadingProgress) {
                       if (loadingProgress == null) return child;
-                      return const Center(child: CircularProgressIndicator(color: appPrimaryColor,));
-                    },
-                    errorBuilder: (context, error, stackTrace) {
-                      return Image.asset(
-                        "images/qr.png",
-                        width: double.infinity,
-                        height: size.height * 0.3,
-                        fit: BoxFit.contain,
+                      return const Center(
+                        child: CircularProgressIndicator(color: appPrimaryColor),
                       );
                     },
-                  )
-
+                    errorBuilder: (context, error, stackTrace) {
+                      return Padding(
+                        padding: const EdgeInsets.only(top: 60),
+                        child: Image.asset(
+                          "images/qr.png",
+                          width: double.infinity,
+                          height: double.infinity,
+                          fit: BoxFit.cover,
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ),
             ),
           )
-              : verticalSpace(height: size.height * 0.1),
+
+            : verticalSpace(height: size.height * 0.1),
           verticalSpace(height: size.height * 0.02),
 
           /// **Dynamic Payment Buttons**
