@@ -210,7 +210,7 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
               ),
 
               verticalSpace(height: size.height * 0.03),
-              Text("Charge Bay", style: MyTextStyle.f18(whiteColor)),
+              Text("Bay Charge", style: MyTextStyle.f18(whiteColor)),
               verticalSpace(height: size.height * 0.03),
               if (selectedChargeBay != null) ...[
                 Column(

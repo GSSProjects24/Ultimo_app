@@ -60,7 +60,7 @@ class ValetParkingPrinter {
       Overlay.of(context)?.insert(overlayEntry);
 
       // Wait for the UI to build
-      await Future.delayed(Duration(milliseconds: 500));
+      await Future.delayed(const Duration(milliseconds: 500));
 
       // Capture image
       RenderRepaintBoundary? boundary =
@@ -86,7 +86,7 @@ class ValetParkingPrinter {
   // Ticket UI Widget
   Widget buildTicketWidget(Map<String, dynamic> booking, int index) {
     return Container(
-      padding: EdgeInsets.all(10),
+      padding: const EdgeInsets.all(10),
       decoration: BoxDecoration(
         border: Border.all(color: Colors.black),
         borderRadius: BorderRadius.circular(5),
@@ -101,11 +101,11 @@ class ValetParkingPrinter {
             width: 200, // Adjust size as needed
             height: 200,
           ),
-          SizedBox(height: 10),
-          Text("ULTIMO PARKING & VALET SERVICE",
+          const SizedBox(height: 10),
+          const Text("ULTIMO PARKING & VALET SERVICE",
               textAlign: TextAlign.center,
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25)),
-          Text("SDN. BHD. (Malaysia)", style: TextStyle(fontSize: 25)),
+          const Text("SDN. BHD. (Malaysia)", style: TextStyle(fontSize: 25)),
 
           // Ticket Details in Row with spaceBetween
           Padding(
@@ -115,66 +115,73 @@ class ValetParkingPrinter {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("Ticket No:", style: TextStyle(fontSize: 23)),
-                    Text("$index", style: TextStyle(fontSize: 23)),
+                    const Text("Ticket No:", style: TextStyle(fontSize: 23)),
+                    Text("$index", style: const TextStyle(fontSize: 23)),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("Car Number:", style: TextStyle(fontSize: 23)),
-                    Text("${booking['carNumber'] ?? 'N/A'}", style: TextStyle(fontSize: 23)),
+                    const Text("Car Number:", style: TextStyle(fontSize: 23)),
+                    Text("${booking['carNumber'] ?? 'N/A'}", style: const TextStyle(fontSize: 23)),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("Key Holder:", style: TextStyle(fontSize: 23)),
-                    Text("${booking['keyHolder'] ?? 'N/A'}", style: TextStyle(fontSize: 23)),
+                    const Text("Key Holder:", style: TextStyle(fontSize: 23)),
+                    Text("${booking['keyHolder'] ?? 'N/A'}", style: const TextStyle(fontSize: 23)),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("Jockey:", style: TextStyle(fontSize: 23)),
-                    Text("${booking['jockey'] ?? 'N/A'}", style: TextStyle(fontSize: 23)),
+                    const Text("Location:", style: TextStyle(fontSize: 23)),
+                    Text("${booking['location'] ?? 'N/A'}", style: const TextStyle(fontSize: 23)),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("Amount:", style: TextStyle(fontSize: 23)),
-                    Text("RM${booking['amount'] ?? '0.00'}", style: TextStyle(fontSize: 23)),
+                    const Text("Jockey:", style: TextStyle(fontSize: 23)),
+                    Text("${booking['jockey'] ?? 'N/A'}", style: const TextStyle(fontSize: 23)),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("Check-in:", style: TextStyle(fontSize: 23)),
-                    Text("${booking['checkIn'] ?? 'N/A'}", style: TextStyle(fontSize: 23)),
+                    const Text("Amount:", style: TextStyle(fontSize: 23)),
+                    Text("RM${booking['amount'] ?? '0.00'}", style: const TextStyle(fontSize: 23)),
                   ],
                 ),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("Check-out:", style: TextStyle(fontSize: 23)),
-                    Text("${booking['checkout'] ?? 'Pending'}", style: TextStyle(fontSize: 23)),
+                    const Text("Check-in:", style: TextStyle(fontSize: 23)),
+                    Text("${booking['checkIn'] ?? 'N/A'}", style: const TextStyle(fontSize: 23)),
                   ],
-                ),   SizedBox(height: 10,),
+                ),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    const Text("Check-out:", style: TextStyle(fontSize: 23)),
+                    Text("${booking['checkout'] ?? 'Pending'}", style: const TextStyle(fontSize: 23)),
+                  ],
+                ),   const SizedBox(height: 10,),
+                const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text("Thank you for using our service!", style: TextStyle(fontSize: 20)),
 
                   ],
                 ),
-                Row(
+                const Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text("   ", style: TextStyle(fontSize: 20)),
 
                   ],
-                ),SizedBox(height: 10,),
+                ),const SizedBox(height: 10,),
               ],
             ),
           ),

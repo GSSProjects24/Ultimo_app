@@ -40,7 +40,7 @@ class BookingDetails extends StatelessWidget {
         children: [
           DetailRow(icon: Icons.directions_car, title: "Car Number:", value: carNumber),
           DetailRow(icon: Icons.phone, title: "Mobile Number:", value: mobileNumber),
-          DetailRow(icon: Icons.local_parking, title: "Parking Slot:", value: "Bay $parkingSlot"),
+          DetailRow(icon: Icons.local_parking, title: "Parking Bay:", value: "$parkingSlot"),
           DetailRow(icon: Icons.vpn_key, title: "Key Holder:", value: keyHolder),
           DetailRow(icon: Icons.location_on, title: "Location:", value: location),
           if(chargeBay =="Day")

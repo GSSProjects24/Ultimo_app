@@ -103,6 +103,7 @@ class _ValetParkingReportPageState extends State<ValetParkingReportPage> {
           'carNumber': doc['carNumber'] ?? 'N/A',
           'keyHolder': doc['keyHolder'] ?? 'N/A',
           'jockey': doc['jockey'] ?? 'N/A',
+          'location': doc['location'] ?? 'N/A',
           'amount': amount.toStringAsFixed(2),
           'checkIn': checkInTimestamp != null
               ? DateFormat('dd-MM-yyyy hh:mm a').format(checkInTimestamp.toDate())
@@ -396,6 +397,7 @@ class _ValetParkingReportPageState extends State<ValetParkingReportPage> {
           children: [
             Text("Key Holder: ${booking['keyHolder']}", style: MyTextStyle.f14(whiteColor)),
             Text("Jockey : ${booking['jockey']}", style: MyTextStyle.f14(whiteColor)),
+            Text("Location : ${booking['location']}", style: MyTextStyle.f14(whiteColor)),
             Text("Amount : RM${booking['amount']}", style: MyTextStyle.f14(whiteColor)),
             Text("Check-in: ${booking['checkIn']}", style: MyTextStyle.f14(whiteColor)),
             Text("Check-out: ${booking['checkout']}", style: MyTextStyle.f14(whiteColor)),

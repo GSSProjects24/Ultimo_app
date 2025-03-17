@@ -64,7 +64,7 @@ class TicketPrinter {
             ),
       );
 
-      Overlay.of(context)?.insert(overlayEntry);
+      Overlay.of(context).insert(overlayEntry);
       await Future.delayed(Duration(seconds: 3));
 
       RenderRepaintBoundary? boundary =
@@ -121,10 +121,10 @@ class TicketPrinter {
                   rowText("Mobile Number:", bookingDetail.mobileNumber),
                   // rowText("Parking Slot:", bookingDetail.parkingSlot),
                   rowText("Key Holder:", bookingDetail.keyHolder),
+                  rowText("Location:", bookingDetail.location),
                   rowText("Amount:", "RM${bookingDetail.amount}"),
                   rowText("Check-in:", "${bookingDetail.bookingDate}${bookingDetail.bookingTime}"),
                   rowText("Check-out:", "${bookingDetail.checkoutDate}${bookingDetail.checkOutTime}"),
-                  rowText("Location:", bookingDetail.location),
                   rowText("Total Amount:", "RM${bookingDetail.totalAmount}"),
                   SizedBox(height: 10,),
                   rowTexttq("Thank you for using our service!", ),

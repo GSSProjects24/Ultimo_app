@@ -8,27 +8,6 @@ import '../checkout/widget/booking_details.dart';
 import '../printer/Bookingdetail_print.dart';
 
 class QRScreen extends StatefulWidget {
-  // final String? carNumber;
-  // final String? mobileNumber;
-  // final String? parkingSlot;
-  // final String? bookingDate;
-  // final String? checkoutDate;
-  // final String? keyHolder;
-  // final String? amount;
-  // final String? totalAmount;
-  // final String? location;
-  //
-  // QRScreen({
-  //   required this.carNumber,
-  //   required this.mobileNumber,
-  //   required this.parkingSlot,
-  //   required this.keyHolder,
-  //   required this.bookingDate,
-  //   required this.checkoutDate,
-  //   required this.amount,
-  //   required this.totalAmount,
-  //   required this.location,
-  // });
   final BookingDetailsModel bookingDetail;
   const QRScreen({Key? key, required this.bookingDetail}) : super(key: key);
   @override
@@ -93,97 +72,107 @@ class _QRScreenState extends State<QRScreen> {
       ),
       body: Column(
         children: [
-          const Spacer(),
-          Text(
-            selectedQR == "images/qr.png"
-                ? "Select Payment Method"
-                : "Please scan the QR code",
-            style: MyTextStyle.f18(whiteColor, weight: FontWeight.bold),
-            textAlign: TextAlign.center,
-          ),
-          verticalSpace(height: size.height * 0.015),
-          selectedQR.isNotEmpty
-              ? Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20),
-            child: Center(
-              child: Container(
-                width: double.infinity,
-                height: size.height * 0.58, // You can adjust height as needed
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.2),
-                      blurRadius: 10,
-                      spreadRadius: 2,
-                    ),
-                  ],
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Image.network(
-                    selectedQR,
-                    width: double.infinity,
-                    height: double.infinity,
-                    fit: BoxFit.contain,
-                    loadingBuilder: (context, child, loadingProgress) {
-                      if (loadingProgress == null) return child;
-                      return const Center(
-                        child: CircularProgressIndicator(color: appPrimaryColor),
-                      );
-                    },
-                    errorBuilder: (context, error, stackTrace) {
-                      return Padding(
-                        padding: const EdgeInsets.only(top: 60),
-                        child: Image.asset(
-                          "images/qr.png",
-                          width: double.infinity,
-                          height: double.infinity,
-                          fit: BoxFit.cover,
-                        ),
-                      );
-                    },
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+              child: Column(
+                children: [
+                  Text(
+                    selectedQR == "images/qr.png"
+                        ? "Select Payment Method"
+                        : "Please scan the QR code",
+                    style: MyTextStyle.f18(whiteColor, weight: FontWeight.bold),
+                    textAlign: TextAlign.center,
                   ),
-                ),
+                  verticalSpace(height: size.height * 0.015),
+                  selectedQR.isNotEmpty
+                      ? Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: Center(
+                      child: Container(
+                        width: double.infinity,
+                        height: size.height * 0.58,
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withOpacity(0.2),
+                              blurRadius: 10,
+                              spreadRadius: 2,
+                            ),
+                          ],
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Image.network(
+                            selectedQR,
+                            width: double.infinity,
+                            height: double.infinity,
+                            fit: BoxFit.contain,
+                            loadingBuilder:
+                                (context, child, loadingProgress) {
+                              if (loadingProgress == null) return child;
+                              return const Center(
+                                child: CircularProgressIndicator(
+                                    color: appPrimaryColor),
+                              );
+                            },
+                            errorBuilder: (context, error, stackTrace) {
+                              return Padding(
+                                padding: const EdgeInsets.only(top: 60),
+                                child: Image.asset(
+                                  "images/qr.png",
+                                  width: double.infinity,
+                                  height: double.infinity,
+                                  fit: BoxFit.cover,
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                  )
+                      : verticalSpace(height: size.height * 0.1),
+                  verticalSpace(height: size.height * 0.02),
+
+                  isLoading
+                      ? const CircularProgressIndicator(color: whiteColor)
+                      : Wrap(
+                    spacing: 10,
+                    runSpacing: 10,
+                    alignment: WrapAlignment.center,
+                    children: paymentMethods.map((method) {
+                      return ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            selectedQR =
+                                method["image"] ?? "images/qr.png";
+                          });
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: checkoutColor,
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 12),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                        child: Text(method["name"] ?? "Unknown",
+                            style: MyTextStyle.f16(whiteColor)),
+                      );
+                    }).toList(),
+                  ),
+                ],
               ),
             ),
-          )
-
-            : verticalSpace(height: size.height * 0.1),
-          verticalSpace(height: size.height * 0.02),
-
-          /// **Dynamic Payment Buttons**
-          isLoading
-              ? const CircularProgressIndicator(color: whiteColor)
-              : Wrap(
-            spacing: 10,
-            runSpacing: 10,
-            alignment: WrapAlignment.center,
-            children: paymentMethods.map((method) {
-              return ElevatedButton(
-                onPressed: () {
-                  setState(() {
-                    selectedQR = method["image"] ?? "images/qr.png";
-                  });
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: checkoutColor,
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 20, vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                child: Text(method["name"] ?? "Unknown",
-                    style: MyTextStyle.f16(whiteColor)),
-              );
-            }).toList(),
           ),
 
-          const Spacer(),
-          Padding(
+          /// Bottom Button Row (Always at the Bottom)
+          Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+            color: blackColor, // Match your page background
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -191,7 +180,10 @@ class _QRScreenState extends State<QRScreen> {
                   child: ElevatedButton(
                     onPressed: () {
                       Navigator.pushNamedAndRemoveUntil(
-                          context, ValetParkingRoutes.homeRoute, (route) => false);
+                        context,
+                        ValetParkingRoutes.homeRoute,
+                            (route) => false,
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: appCardColor,
@@ -207,10 +199,12 @@ class _QRScreenState extends State<QRScreen> {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
-                      _printBookingdetail(widget.bookingDetail,context);
-                      // print("----------${widget.carNumber}");
+                      _printBookingdetail(widget.bookingDetail, context);
                       Navigator.pushNamedAndRemoveUntil(
-                          context, ValetParkingRoutes.homeRoute, (route) => false);
+                        context,
+                        ValetParkingRoutes.homeRoute,
+                            (route) => false,
+                      );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: appPrimaryColor,
@@ -229,6 +223,7 @@ class _QRScreenState extends State<QRScreen> {
       ),
     );
   }
+
   // late final BookingDetails bookingDetail; // Ensure this is passed in constructor
 
   final bookingdetailtPrinter = TicketPrinter();
