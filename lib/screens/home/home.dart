@@ -73,6 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
           'location': doc['location'] ?? '',
           'jockey': doc['jockey'] ?? '',
           'chargeBay': doc['chargeBay'] ?? '',
+          'paymentMethodName':doc['paymentMethodName'] ?? '',
 
         };
       }).toList();
@@ -167,7 +168,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   verticalSpace(height: size.height * 0.01),
                   Expanded(
                     child: FutureBuilder<Stream<QuerySnapshot>>(
-                      future: _getBookingsStream(), // Resolve the Future first
+                      future: _getBookingsStream(),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState == ConnectionState.waiting) {
                           return const Center(
@@ -182,7 +183,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         }
 
                         return StreamBuilder<QuerySnapshot>(
-                          stream: snapshot.data, // Now we pass the resolved Stream
+                          stream: snapshot.data,
                           builder: (context, streamSnapshot) {
                             if (streamSnapshot.connectionState == ConnectionState.waiting) {
                               return const Center(
@@ -213,14 +214,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                 'location': data['location'] ?? '',
                                 'jockey': data['jockey'] ?? '',
                                 'chargeBay': data['chargeBay'] ?? '',
+                                'paymentMethodName':data['paymentMethodName'] ?? '',
                               };
                             }).toList();
 
-                            // **Apply search filtering here**
                             filteredList = filteredList.where((car) {
                               return car['carNo'].toLowerCase().contains(searchQuery.toLowerCase());
                             }).toList();
-
+                            debugPrint('data:$filteredList');
                             return GridView.builder(
                               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount: 2,
@@ -232,6 +233,7 @@ class _HomeScreenState extends State<HomeScreen> {
                               itemBuilder: (context, index) {
                                 var car = filteredList[index];
                                 return CardDesign(
+                                  documentId: streamSnapshot.data!.docs[index].id,
                                   carNo: car['carNo'],
                                   mobileNo: car['mobileNo'],
                                   parkingSlot: car['parkingSlot'],
@@ -244,10 +246,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                     DateTime now = DateTime.now();
                                     String formattedDate = DateFormat('dd-MM-yyyy').format(now);
                                     String formattedTime = DateFormat('HH:mm a').format(now);
+                                    debugPrint('documentId:${streamSnapshot.data!.docs[index].id}');
+
                                     Navigator.pushNamed(
                                       context,
                                       ValetParkingRoutes.checkoutRoute,
                                       arguments: {
+                                        'documentId': streamSnapshot.data!.docs[index].id,
                                         'carNo': car['carNo'],
                                         'mobileNo': car['mobileNo'],
                                         'parkingSlot': car['parkingSlot'],
@@ -259,6 +264,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         'amount': car['amount'],
                                         'chargeBay': car['chargeBay'] ?? "",
                                         'location': car['location'] ?? "",
+                                        'paymentMethodName':car['paymentMethodName'] ?? "",
                                       },
                                     );
                                   },

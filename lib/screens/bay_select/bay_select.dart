@@ -9,8 +9,8 @@ import '../../reusable/text_style.dart';
 class ParkingBayScreen extends StatefulWidget {
   final String locationName;
   final String pageType;
-  final String carNo;
-  const ParkingBayScreen({super.key, required this.locationName, required this.pageType, required this.carNo});
+  final String documentId;
+  const ParkingBayScreen({super.key, required this.locationName, required this.pageType, required this.documentId});
 
   @override
   _ParkingBayScreenState createState() => _ParkingBayScreenState();
@@ -68,7 +68,7 @@ class _ParkingBayScreenState extends State<ParkingBayScreen> {
                       child: Padding(
                         padding: const EdgeInsets.only(right: 16.0, bottom: 16.0),
                         child: InkWell(
-                          onTap: () =>   Navigator.pushNamed(context, ValetParkingRoutes.userListRoute,arguments: {"carNo":widget.carNo,"pageType":"primary","location":widget.locationName}),
+                          onTap: () =>   Navigator.pushNamed(context, ValetParkingRoutes.userListRoute,arguments: {"carNo":widget.documentId,"pageType":"primary","location":widget.locationName}),
                           child: Text(
                             "Skip <<<",
                             style: MyTextStyle.f16(appPrimaryColor, weight: FontWeight.bold),
@@ -119,7 +119,7 @@ class _ParkingBayScreenState extends State<ParkingBayScreen> {
                     child: Padding(
                       padding: const EdgeInsets.only(right: 16.0, bottom: 16.0),
                       child: InkWell(
-                        onTap: () =>   Navigator.pushNamed(context, ValetParkingRoutes.userListRoute,arguments: {"carNo":widget.carNo,"pageType":"primary","location":widget.locationName}),
+                        onTap: () =>   Navigator.pushNamed(context, ValetParkingRoutes.userListRoute,arguments: {"carNo":widget.documentId,"pageType":"primary","location":widget.locationName}),
                         child: Text(
                           "Skip <<<",
                           style: MyTextStyle.f16(appPrimaryColor, weight: FontWeight.bold),
@@ -203,29 +203,23 @@ class _ParkingBayScreenState extends State<ParkingBayScreen> {
                         setState(() { isLoading = true; });
                         try {
                           // Step 1: Update the booking document where carNumber matches
-                          QuerySnapshot bookingSnapshot = await FirebaseFirestore.instance
+                          DocumentReference bookingDocRef = FirebaseFirestore.instance
                               .collection("bookings")
-                              .where("carNumber", isEqualTo: widget.carNo)
-                              .get();
+                              .doc(widget.documentId);
 
-                          if (bookingSnapshot.docs.isNotEmpty) {
-                            // Get the booking document ID
-                            String bookingId = bookingSnapshot.docs.first.id;
+                          DocumentSnapshot bookingSnapshot = await bookingDocRef.get();
 
-                            // Update the slot field in the booking
-                            await FirebaseFirestore.instance
-                                .collection("bookings")
-                                .doc(bookingId)
-                                .update({"slot": selectedBay});
-
-                            print("Slot updated successfully for car ${widget.carNo}");
+                          if (bookingSnapshot.exists) {
+                            await bookingDocRef.update({"slot": selectedBay});
+                            print("Slot updated successfully for documentId ${widget.documentId}");
                           } else {
-                            print("No booking found for car ${widget.carNo}");
+                            print("No booking found for documentId ${widget.documentId}");
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text("No booking found for this car")),
+                              const SnackBar(content: Text("No booking found for this booking")),
                             );
                             return;
                           }
+
 
                           // Step 2: Update the available status of the selected slot
                           DocumentReference slotDocRef = FirebaseFirestore.instance
@@ -256,7 +250,7 @@ class _ParkingBayScreenState extends State<ParkingBayScreen> {
                             }
                           }
                           if( widget.pageType == "primary")
-                            Navigator.pushNamed(context, ValetParkingRoutes.userListRoute,arguments: {"carNo":widget.carNo,"pageType":"primary","location":widget.locationName});
+                            Navigator.pushNamed(context, ValetParkingRoutes.userListRoute,arguments: {"documentId":widget.documentId,"pageType":"primary","location":widget.locationName});
                           else{
                             Navigator.pop(context);
                           }
@@ -293,7 +287,7 @@ class _ParkingBayScreenState extends State<ParkingBayScreen> {
                     if( widget.pageType == "primary")
                       InkWell(
                         onTap: () {
-                          Navigator.pushNamed(context, ValetParkingRoutes.userListRoute,arguments: {"carNo":widget.carNo,"pageType":"primary","location":widget.locationName});
+                          Navigator.pushNamed(context, ValetParkingRoutes.userListRoute,arguments: {"documentId":widget.documentId,"pageType":"primary","location":widget.locationName});
                         },
                         child: Text(
                           'Skip <<<',

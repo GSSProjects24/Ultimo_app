@@ -62,9 +62,9 @@ class _LoginScreenState extends State<LoginScreen> {
   void showSnackbar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message, style: TextStyle(color: Colors.white)),
+        content: Text(message, style: const TextStyle(color: Colors.white)),
         backgroundColor: Colors.red,
-        duration: Duration(seconds: 2),
+        duration: const Duration(seconds: 2),
       ),
     );
   }
@@ -133,7 +133,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   onPressed: isLoading ? null : loginUser,
                   child: isLoading
-                      ? CircularProgressIndicator(color: Colors.white)
+                      ? const CircularProgressIndicator(color: Colors.white)
                       : Text("Login", style: MyTextStyle.f18(whiteColor)),
                 ),
               ],

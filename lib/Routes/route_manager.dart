@@ -34,20 +34,26 @@ class InstantPageRoute<T> extends PageRouteBuilder<T> {
 class RouteManager {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
+
       case ValetParkingRoutes.splashRoute:
         return InstantPageRoute(page:  const SwipeToSignInScreen());
-      case ValetParkingRoutes.loginRoute:
+
+        case ValetParkingRoutes.loginRoute:
         return InstantPageRoute(page:  LoginScreen());
-      case ValetParkingRoutes.homeRoute:
+
+        case ValetParkingRoutes.homeRoute:
         return InstantPageRoute(page:  const HomeScreen());
-      case ValetParkingRoutes.bookingFormRoute:
+
+        case ValetParkingRoutes.bookingFormRoute:
         return InstantPageRoute(page:  BookingFormScreen());
+
       case ValetParkingRoutes.baySelectRoute:
         final args = settings.arguments as Map<String, dynamic>;
         final locationName = args['locationName'] as String;
         final pageType = args['pageType'] as String;
-        final carNo = args['carNo'] as String;
-        return InstantPageRoute(page:  ParkingBayScreen(locationName: locationName,pageType: pageType,carNo: carNo,));
+        final documentId = args['documentId'] as String;
+        return InstantPageRoute(page:  ParkingBayScreen(locationName: locationName,pageType: pageType,documentId: documentId,));
+
       case ValetParkingRoutes.checkoutRoute:
         final args = settings.arguments as Map<String, dynamic>;
         final carNo = args['carNo'] as String;
@@ -61,7 +67,8 @@ class RouteManager {
         final amount = args['amount'] as String;
         final chargeBay = args['chargeBay'] as String;
         final location = args['location'] as String;
-
+        final documentId = args['documentId'] as String;
+        final paymentMethodName = args['paymentMethodName'] as String;
         return InstantPageRoute(page:  CheckoutScreen(carNumber: carNo,mobileNumber: mobileNo,
         parkingSlot: parkingSlot,
           keyHolder: keyHolder,
@@ -72,6 +79,8 @@ class RouteManager {
           amount: amount,
           chargeBay: chargeBay,
           location: location,
+            documentId:documentId,
+          paymentMethodName: paymentMethodName,
         ));
 
       case ValetParkingRoutes.reportRoute:
@@ -80,34 +89,22 @@ class RouteManager {
       case ValetParkingRoutes.userListRoute:
         final args = settings.arguments as Map<String, dynamic>;
         final pageType = args['pageType'] as String;
-        final carNo = args['carNo'] as String;
+        final documentId = args['documentId'] as String;
         final location = args['location'] as String;
-        return InstantPageRoute(page:  UserListScreen(carNo: carNo,pageType: pageType,location: location,));
-
-      // case ValetParkingRoutes.qrRoute:
-      //   return InstantPageRoute(page:  QRScreen());
-      // case ValetParkingRoutes.qrRoute:
-      //   final args = settings.arguments as Map<String, dynamic>;
-      //   return InstantPageRoute(page: QRScreen(
-      //     carNumber: args['carNumber'],
-      //     mobileNumber: args['mobileNumber'],
-      //     parkingSlot:  args['parkingSlot'],
-      //     keyHolder: args['keyHolder'],
-      //     bookingDate:  args['bookingDate'],
-      //     checkoutDate:  args['checkoutDate'],
-      //     amount:  args['amount'], totalAmount: args['totalAmount'], location:  args['location'],));
+        return InstantPageRoute(page:  UserListScreen(documentId: documentId,pageType: pageType,location: location,));
 
         case ValetParkingRoutes.keyHolderRoute:
           final args = settings.arguments as Map<String, dynamic>;
           final locationName = args['locationName'] as String;
-          final carNo = args['carNo'] as String;
-        return InstantPageRoute(page:   KeyHolderPage(carNo: carNo,locationName: locationName,));
+          final documentId = args['documentId'] as String;
+        return InstantPageRoute(page:   KeyHolderPage(documentId: documentId,locationName: locationName,));
 
       case ValetParkingRoutes.printHomeRoute:
         return InstantPageRoute(page:  const NewHome());
 
       case ValetParkingRoutes.transactionPrintRoute:
         return InstantPageRoute(page:  const TransactionPrintPage());
+
         default:
         return MaterialPageRoute(
           builder: (context) => Scaffold(

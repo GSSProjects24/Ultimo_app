@@ -125,6 +125,7 @@ class TicketPrinter {
                   rowText("Amount:", "RM${bookingDetail.amount}"),
                   rowText("Check-in:", "${bookingDetail.bookingDate}${bookingDetail.bookingTime}"),
                   rowText("Check-out:", "${bookingDetail.checkoutDate}${bookingDetail.checkOutTime}"),
+                  rowText("Payment Method:", bookingDetail.paymentMethodName ?? ""),
                   rowText("Total Amount:", "RM${bookingDetail.totalAmount}"),
                   SizedBox(height: 10,),
                   rowTexttq("Thank you for using our service!", ),

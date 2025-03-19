@@ -95,7 +95,6 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Location Section
               Container(
                 padding:
                 const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
@@ -218,11 +217,11 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
                     return RadioListTile<String>(
                       title: Text(chargeBay, style: const TextStyle(color: Colors.white)),
                       value: chargeBay,
-                      groupValue: selectedChargeBayOption, // Use new variable here
+                      groupValue: selectedChargeBayOption,
                       onChanged: (value) {
                         setState(() {
                           selectedChargeBayOption = value;
-                          updateBookingType(value); // Update BookingType based on selected charge bay
+                          updateBookingType(value);
                         });
                       },
                       activeColor: appPrimaryColor,
@@ -272,15 +271,14 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
                   });
 
                   try {
-                    // Step 1: Check if the car is already parked
+                    //  Check if the car is already parked
                     QuerySnapshot existingBookings = await FirebaseFirestore.instance
                         .collection("bookings")
                         .where("carNumber", isEqualTo: carNo.text)
-                        .where("checkout", isEqualTo: "") // Check for active parking
+                        .where("checkout", isEqualTo: "")
                         .get();
 
                     if (existingBookings.docs.isNotEmpty) {
-                      // If there is an active booking with no checkout, show a snackbar and stop
                       ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(content: Text("This car is already parked!"))
                       );
@@ -291,7 +289,6 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
                     }
                     SharedPreferences prefs = await SharedPreferences.getInstance();
                     String? username = prefs.getString('perfs');
-                    // Step 2: Prepare Booking Data
                     Map<String, dynamic> bookingData = {
                       "location": selectedLocation,
                       "carNumber": carNo.text,
@@ -306,14 +303,16 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
                       "checkout": "",
                       "totalHours": "",
                       "totalAmount": "",
-                      "paymentStatus":""
+                      "paymentStatus":"",
+                      "paymentMethodName":""
                     };
 
-                    // Step 3: Save Booking Data
-                    await FirebaseFirestore.instance.collection("bookings").add(bookingData);
+                    // Save Booking Data
+                    DocumentReference bookingRef = await FirebaseFirestore.instance.collection("bookings").add(bookingData);
+                    String documentId = bookingRef.id;
                     print("Booking saved successfully");
 
-                    // Step 4: Update Key Holder Availability in Firestore
+                    //  Update Key Holder Availability in Firestore
                     DocumentReference keyHolderDocRef = FirebaseFirestore.instance
                         .collection("key_holders")
                         .doc(selectedLocation);
@@ -351,7 +350,7 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
                       arguments: {
                         "locationName": selectedLocation,
                         "pageType": "primary",
-                        "carNo": carNo.text
+                        "documentId": documentId
                       },
                     );
                   } catch (e) {

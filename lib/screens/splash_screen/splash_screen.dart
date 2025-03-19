@@ -6,11 +6,6 @@ import '../../reusable/color.dart';
 import '../../reusable/space.dart';
 import '../../reusable/text_style.dart';
 
-import '../../Routes/route.dart';
-import '../../reusable/color.dart';
-
-
-
 class SwipeToSignInScreen extends StatefulWidget {
   const SwipeToSignInScreen({super.key});
 

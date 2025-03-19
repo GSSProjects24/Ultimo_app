@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 import '../../../Routes/route.dart';
-import '../../../pages/v2/transaction_print.dart';
 import '../../../reusable/color.dart';
 import '../../../reusable/space.dart';
 import '../../../reusable/text_style.dart';
@@ -84,7 +82,7 @@ class _HeadSectionState extends State<HeadSection> {
                         controller: widget.searchController,
                         onChanged: (value) {
                           widget.onSearch(value);
-                          setState(() {}); // Update UI to show/hide clear button
+                          setState(() {});
                         },
                         cursorColor: widget.searchController.text.isEmpty ? Colors.transparent : Colors.black, // Hide cursor when empty
                         decoration: InputDecoration(
@@ -101,7 +99,7 @@ class _HeadSectionState extends State<HeadSection> {
                             onPressed: () {
                               widget.searchController.clear();
                               widget.onSearch('');
-                              setState(() {}); // Update UI
+                              setState(() {});
                             },
                           )
                               : null,

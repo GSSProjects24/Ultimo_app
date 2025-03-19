@@ -9,14 +9,14 @@ import '../../../reusable/text_style.dart';
 
 class KeyHolderSection extends StatefulWidget {
   final String? selectedHotel;
-  final String? selectedKeyHolder; // Added this parameter
+  final String? selectedKeyHolder;
   final ValueChanged<String?> onKeyHolderSelected;
 
   const KeyHolderSection({
     super.key,
     required this.selectedHotel,
     required this.onKeyHolderSelected,
-    this.selectedKeyHolder, // Accept selected key holder
+    this.selectedKeyHolder,
   });
 
   @override
@@ -30,7 +30,7 @@ class _KeyHolderSectionState extends State<KeyHolderSection> {
   @override
   void initState() {
     super.initState();
-    selectedBay = widget.selectedKeyHolder; // Set initial value
+    selectedBay = widget.selectedKeyHolder;
     fetchKeyHolders();
   }
 
@@ -60,7 +60,7 @@ class _KeyHolderSectionState extends State<KeyHolderSection> {
         setState(() {
           bayNumbers = availableBays;
           if (!bayNumbers.contains(selectedBay)) {
-            selectedBay = widget.selectedKeyHolder; // Reassign if it's a valid selection
+            selectedBay = widget.selectedKeyHolder;
           }
         });
       } else {

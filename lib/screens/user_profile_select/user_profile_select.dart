@@ -8,11 +8,11 @@ import '../../reusable/color.dart';
 import '../../reusable/text_style.dart';
 
 class UserListScreen extends StatefulWidget {
-  final String carNo;
+  final String documentId;
   final String pageType;
   final String location;
 
-  const UserListScreen({super.key, required this.carNo, required this.pageType, required this.location});
+  const UserListScreen({super.key, required this.documentId, required this.pageType, required this.location});
 
   @override
   _UserListScreenState createState() => _UserListScreenState();
@@ -179,14 +179,17 @@ class _UserListScreenState extends State<UserListScreen> {
 
   Future<void> _updateUserProfile() async {
     String selectedJockeyName = users[_selectedIndex!]["name"] ?? "Unknown";
-    QuerySnapshot bookingSnapshot = await FirebaseFirestore.instance
+    DocumentSnapshot bookingDoc = await FirebaseFirestore.instance
         .collection("bookings")
-        .where("carNumber", isEqualTo: widget.carNo)
+        .doc(widget.documentId)
         .get();
 
-    if (bookingSnapshot.docs.isNotEmpty) {
-      String bookingId = bookingSnapshot.docs.first.id;
-      await FirebaseFirestore.instance.collection("bookings").doc(bookingId).update({"jockey": selectedJockeyName});
+    if (bookingDoc.exists) {
+      await FirebaseFirestore.instance
+          .collection("bookings")
+          .doc(widget.documentId)
+          .update({"jockey": selectedJockeyName});
+
       if (widget.pageType == "primary") {
         _showBookingSuccessDialog(MediaQuery.of(context).size);
       } else {
@@ -194,7 +197,10 @@ class _UserListScreenState extends State<UserListScreen> {
       }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("No matching booking found."), backgroundColor: Colors.red),
+        const SnackBar(
+          content: Text("No matching booking found."),
+          backgroundColor: Colors.red,
+        ),
       );
     }
   }

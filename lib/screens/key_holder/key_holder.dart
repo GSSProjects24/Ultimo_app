@@ -7,10 +7,10 @@ import '../../reusable/text_style.dart';
 import '../booking/widget/key_holder.dart';
 
 class KeyHolderPage extends StatefulWidget {
-  final String carNo;
+  final String documentId;
   final String locationName;
 
-  const KeyHolderPage({super.key, required this.carNo, required this.locationName});
+  const KeyHolderPage({super.key, required this.documentId, required this.locationName});
 
   @override
   State<KeyHolderPage> createState() => _KeyHolderPageState();
@@ -30,17 +30,15 @@ class _KeyHolderPageState extends State<KeyHolderPage> {
 
   Future<void> _fetchKeyHolder() async {
     try {
-      QuerySnapshot snapshot = await FirebaseFirestore.instance
+      DocumentSnapshot docSnapshot = await FirebaseFirestore.instance
           .collection('bookings')
-          .where('carNumber', isEqualTo: widget.carNo)
-          .limit(1)
+          .doc(widget.documentId)
           .get();
 
-      if (snapshot.docs.isNotEmpty) {
-        var doc = snapshot.docs.first;
+      if (docSnapshot.exists) {
         setState(() {
-          documentId = doc.id;
-          selectedKeyHolder = doc['keyHolder'];
+          documentId = docSnapshot.id;
+          selectedKeyHolder = docSnapshot['keyHolder'];
           isLoading = false;
         });
       } else {
@@ -55,6 +53,7 @@ class _KeyHolderPageState extends State<KeyHolderPage> {
       });
     }
   }
+
 
   Future<void> _updateKeyHolder() async {
     if (documentId != null && selectedKeyHolder != null) {
@@ -122,7 +121,7 @@ class _KeyHolderPageState extends State<KeyHolderPage> {
         ),
       ),
       body: isLoading
-          ? Center(child: CircularProgressIndicator(color: appPrimaryColor))
+          ? const Center(child: CircularProgressIndicator(color: appPrimaryColor))
           : Center(
         child: Padding(
           padding: const EdgeInsets.all(20.0),

@@ -17,6 +17,7 @@ class CardDesign extends StatefulWidget {
   final VoidCallback onCheckout;
   final Size size;
   final String locationName;
+  final String documentId;
 
 
   const CardDesign({
@@ -28,7 +29,7 @@ class CardDesign extends StatefulWidget {
     required this.startTime,
     required this.date,
     required this.onCheckout,
-    required this.size, required this.locationName, required this.jockey,
+    required this.size, required this.locationName, required this.jockey, required this.documentId,
   });
 
   @override
@@ -68,7 +69,6 @@ class _CardDesignState extends State<CardDesign> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Car Image
               ClipRRect(
                 borderRadius: BorderRadius.circular(12),
                 child: Image.asset(
@@ -95,7 +95,7 @@ class _CardDesignState extends State<CardDesign> {
                       icon: Icons.vpn_key,
                       label: "Keys",
                       onTap: () {
-                        Navigator.pushNamed(context, ValetParkingRoutes.keyHolderRoute,arguments: {"carNo":widget.carNo,"locationName":widget.locationName});
+                        Navigator.pushNamed(context, ValetParkingRoutes.keyHolderRoute,arguments: {"documentId":widget.documentId,"locationName":widget.locationName});
                       },
                     ),
                   if( widget.parkingSlot.isEmpty)
@@ -103,7 +103,7 @@ class _CardDesignState extends State<CardDesign> {
                       icon: Icons.local_parking,
                       label: "Bay",
                       onTap: () {
-                        Navigator.pushNamed(context, ValetParkingRoutes.baySelectRoute,arguments: {"carNo":widget.carNo,"locationName":widget.locationName,"pageType":"secondary"});
+                        Navigator.pushNamed(context, ValetParkingRoutes.baySelectRoute,arguments: {"documentId":widget.documentId,"locationName":widget.locationName,"pageType":"secondary"});
                       },
                     ),
                   if( widget.jockey.isEmpty)
@@ -111,7 +111,7 @@ class _CardDesignState extends State<CardDesign> {
                       icon: Icons.person,
                       label: "User",
                       onTap: () {
-                        Navigator.pushNamed(context, ValetParkingRoutes.userListRoute,arguments: {"carNo":widget.carNo,"pageType":"secondary","location":widget.locationName});
+                        Navigator.pushNamed(context, ValetParkingRoutes.userListRoute,arguments: {"documentId":widget.documentId,"pageType":"secondary","location":widget.locationName});
                       },
                     ),
                 ],

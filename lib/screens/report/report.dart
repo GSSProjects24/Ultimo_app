@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:imin_printer/enums.dart';
 import 'package:imin_printer/imin_printer.dart';
 import 'package:imin_printer/imin_style.dart';
+import 'package:imin_printer_example/screens/printer/report_all_print.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 
@@ -24,6 +25,7 @@ class _ValetParkingReportPageState extends State<ValetParkingReportPage> {
   double totalAmount = 0.0;
   final iminPrinter = IminPrinter();
   final valetPrinter = ValetParkingPrinter();
+  final reportAllPrint = ReportAllPrint();
   bool isLoading = false;
   TimeOfDay selectedStartTime = const TimeOfDay(hour: 0, minute: 0);
   TimeOfDay selectedEndTime = const TimeOfDay(hour: 23, minute: 59);
@@ -111,6 +113,7 @@ class _ValetParkingReportPageState extends State<ValetParkingReportPage> {
           'checkout': checkoutTimestamp != null
               ? DateFormat('dd-MM-yyyy hh:mm a').format(checkoutTimestamp.toDate())
               : 'Pending',
+          'paymentMethodName': doc['paymentMethodName'] ?? 'N/A',
         };
       }).toList();
 
@@ -338,7 +341,9 @@ class _ValetParkingReportPageState extends State<ValetParkingReportPage> {
               width: double.infinity,
               child: ElevatedButton.icon(
                 onPressed: () async{
-                  await valetPrinter.printAllTickets(bookings, context);
+                  if(filteredBookings.isNotEmpty) {
+                    await reportAllPrint.printAllBookingsTicket(filteredBookings, context);
+                  }
                   //Navigator.pushNamed(context, ValetParkingRoutes.printHomeRoute);
                 },
                 icon: const Icon(Icons.print, color: whiteColor),

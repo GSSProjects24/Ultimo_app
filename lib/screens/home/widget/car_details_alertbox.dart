@@ -22,8 +22,6 @@ class CarDetailsDialog extends StatelessWidget {
       titlePadding: EdgeInsets.zero,
       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
       actionsPadding: const EdgeInsets.only(bottom: 10),
-
-      // Title with an icon
       title: Column(
         children: [
           const Icon(Icons.local_parking, color: appPrimaryColor, size: 50),

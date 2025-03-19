@@ -9,7 +9,8 @@ import '../printer/Bookingdetail_print.dart';
 
 class QRScreen extends StatefulWidget {
   final BookingDetailsModel bookingDetail;
-  const QRScreen({Key? key, required this.bookingDetail}) : super(key: key);
+  final String documentId;
+  const QRScreen({Key? key, required this.bookingDetail, required this.documentId}) : super(key: key);
   @override
   _QRScreenState createState() => _QRScreenState();
 }
@@ -18,11 +19,13 @@ class _QRScreenState extends State<QRScreen> {
   String selectedQR = "images/qr.png";
   List<Map<String, String>> paymentMethods = [];
   bool isLoading = true;
+  String? selectedPaymentMethodName;
 
   @override
   void initState() {
     super.initState();
     fetchPaymentMethods();
+    debugPrint('documentId:${widget.documentId}');
 
   }
 
@@ -149,7 +152,10 @@ class _QRScreenState extends State<QRScreen> {
                           setState(() {
                             selectedQR =
                                 method["image"] ?? "images/qr.png";
+                            selectedPaymentMethodName = method["name"] ?? "";
+                            widget.bookingDetail.paymentMethodName =  method["name"] ?? "";
                           });
+                          debugPrint('selectedPaymentMethodName $selectedPaymentMethodName');
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: checkoutColor,
@@ -198,13 +204,51 @@ class _QRScreenState extends State<QRScreen> {
                 horizontalSpace(width: size.width * 0.05),
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () {
-                      _printBookingdetail(widget.bookingDetail, context);
-                      Navigator.pushNamedAndRemoveUntil(
-                        context,
-                        ValetParkingRoutes.homeRoute,
-                            (route) => false,
-                      );
+                    onPressed: () async {
+                      debugPrint('documentId:${widget.documentId}');
+                      if (selectedPaymentMethodName == null || selectedPaymentMethodName!.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("Please select a payment method!")),
+                        );
+                        return;
+                      }
+
+                      try {
+                        setState(() {
+                          isLoading = true;
+                        });
+
+                        final docRef = FirebaseFirestore.instance
+                            .collection('bookings')
+                            .doc(widget.documentId);
+
+                        final docSnapshot = await docRef.get();
+
+                        if (docSnapshot.exists) {
+                          await docRef.update({
+                            'paymentMethodName': selectedPaymentMethodName,
+                          });
+                           //widget.bookingDetail.paymentMethodName = selectedPaymentMethodName;
+                           _printBookingdetail(widget.bookingDetail, context);
+                           Navigator.pushNamedAndRemoveUntil(
+                            context,
+                            ValetParkingRoutes.homeRoute,
+                                (route) => false,
+                          );
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(content: Text("Booking document not found!")),
+                          );
+                        }
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("Error updating payment method: $e")),
+                        );
+                      } finally {
+                        setState(() {
+                          isLoading = false;
+                        });
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: appPrimaryColor,
@@ -213,9 +257,12 @@ class _QRScreenState extends State<QRScreen> {
                         borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    child: Text("PRINT", style: MyTextStyle.f16(whiteColor)),
+                    child: isLoading
+                        ? const CircularProgressIndicator(color: whiteColor)
+                        : Text("PRINT", style: MyTextStyle.f16(whiteColor)),
                   ),
                 ),
+
               ],
             ),
           ),

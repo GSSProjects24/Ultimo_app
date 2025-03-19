@@ -15,6 +15,7 @@ class BookingDetails extends StatelessWidget {
   final String checkInTime;
   final String checkOutTime;
   final String chargeBay;
+  final String paymentMethodName;
 
   BookingDetails({
     required this.carNumber,
@@ -23,7 +24,7 @@ class BookingDetails extends StatelessWidget {
     required this.keyHolder,
     required this.bookingDate,
     required this.checkoutDate,
-    required this.amount, required this.totalAmount, required this.location, required this.checkInTime, required this.checkOutTime, required this.chargeBay,
+    required this.amount, required this.totalAmount, required this.location, required this.checkInTime, required this.checkOutTime, required this.chargeBay, required this.paymentMethodName,
   });
 
   @override
@@ -69,6 +70,7 @@ class BookingDetailsModel {
   final String location;
   final String bookingTime;
   final String checkOutTime;
+   String? paymentMethodName;
 
   BookingDetailsModel( {
     required this.carNumber,
@@ -82,6 +84,7 @@ class BookingDetailsModel {
     required this.location,
     required this.bookingTime,
     required this.checkOutTime,
+    this.paymentMethodName,
   });
 
   // Convert JSON to BookingDetails
@@ -98,6 +101,7 @@ class BookingDetailsModel {
       location: json['location'] ?? '',
       bookingTime :json['bookingTime'] ?? '',
       checkOutTime:json['checkOutTime'] ?? '',
+      paymentMethodName:json['paymentMethodName'] ?? '',
 
     );
   }
@@ -115,7 +119,8 @@ class BookingDetailsModel {
       'totalAmount': totalAmount,
       'location': location,
       'bookingTime':bookingTime,
-      'checkOutTime':checkOutTime
+      'checkOutTime':checkOutTime,
+      'paymentMethodName':paymentMethodName
     };
   }
 }
