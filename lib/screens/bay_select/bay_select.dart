@@ -68,7 +68,10 @@ class _ParkingBayScreenState extends State<ParkingBayScreen> {
                       child: Padding(
                         padding: const EdgeInsets.only(right: 16.0, bottom: 16.0),
                         child: InkWell(
-                          onTap: () =>   Navigator.pushNamed(context, ValetParkingRoutes.userListRoute,arguments: {"carNo":widget.documentId,"pageType":"primary","location":widget.locationName}),
+                          onTap: () {
+                            debugPrint('user : ${widget.documentId} , ${widget.locationName}');
+                            Navigator.pushNamed(context, ValetParkingRoutes.userListRoute,arguments: {"documentId":widget.documentId,"pageType":"primary","location":widget.locationName});
+                          },
                           child: Text(
                             "Skip <<<",
                             style: MyTextStyle.f16(appPrimaryColor, weight: FontWeight.bold),
@@ -119,7 +122,9 @@ class _ParkingBayScreenState extends State<ParkingBayScreen> {
                     child: Padding(
                       padding: const EdgeInsets.only(right: 16.0, bottom: 16.0),
                       child: InkWell(
-                        onTap: () =>   Navigator.pushNamed(context, ValetParkingRoutes.userListRoute,arguments: {"carNo":widget.documentId,"pageType":"primary","location":widget.locationName}),
+                        onTap: () {
+                          Navigator.pushNamed(context, ValetParkingRoutes.userListRoute,arguments: {"documentId":widget.documentId,"pageType":"primary","location":widget.locationName});
+                        },
                         child: Text(
                           "Skip <<<",
                           style: MyTextStyle.f16(appPrimaryColor, weight: FontWeight.bold),
@@ -287,7 +292,8 @@ class _ParkingBayScreenState extends State<ParkingBayScreen> {
                     if( widget.pageType == "primary")
                       InkWell(
                         onTap: () {
-                          Navigator.pushNamed(context, ValetParkingRoutes.userListRoute,arguments: {"documentId":widget.documentId,"pageType":"primary","location":widget.locationName});
+                         debugPrint('user : ${widget.documentId} , ${widget.locationName}');
+                       Navigator.pushNamed(context, ValetParkingRoutes.userListRoute,arguments: {"documentId":widget.documentId,"pageType":"primary","location":widget.locationName});
                         },
                         child: Text(
                           'Skip <<<',

@@ -98,7 +98,7 @@ class _ValetParkingReportPageState extends State<ValetParkingReportPage> {
         Timestamp? checkInTimestamp = doc['checkIn'] is Timestamp ? doc['checkIn'] : null;
         Timestamp? checkoutTimestamp = doc['checkout'] is Timestamp ? doc['checkout'] : null;
 
-        double amount = double.tryParse(doc['amount']?.toString() ?? '0') ?? 0;
+        double amount = double.tryParse(doc['totalAmount']?.toString() ?? '0') ?? 0;
         total += amount;
 
         return {

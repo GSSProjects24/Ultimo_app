@@ -1,6 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:image_network/image_network.dart';
+import 'package:imin_printer_example/screens/checkout/widget/booking_details.dart';
+import 'package:imin_printer_example/screens/printer/Bookingdetail_print.dart';
+import 'package:imin_printer_example/screens/printer/acknowledgement_customer_print.dart';
+import 'package:imin_printer_example/screens/printer/report_print.dart';
 import 'package:imin_printer_example/screens/user_profile_select/widget/success_dialogue.dart';
 
 import '../../Routes/route.dart';
@@ -21,6 +25,7 @@ class UserListScreen extends StatefulWidget {
 class _UserListScreenState extends State<UserListScreen> {
   int? _selectedIndex;
   List<Map<String, dynamic>> users = [];
+  final acknowledgementCustomerPrinter = AcknowledgementCustomerPrinter();
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -67,11 +72,9 @@ class _UserListScreenState extends State<UserListScreen> {
                       child: Padding(
                         padding: const EdgeInsets.only(right: 16.0, bottom: 16.0),
                         child: InkWell(
-                          onTap: () => Navigator.pushNamedAndRemoveUntil(
-                            context,
-                            ValetParkingRoutes.homeRoute,
-                                (route) => false,
-                          ),
+                          onTap: () {
+                            _skipUserProfile();
+                          },
                           child: Text(
                             "Skip <<<",
                             style: MyTextStyle.f16(appPrimaryColor, weight: FontWeight.bold),
@@ -123,10 +126,10 @@ class _UserListScreenState extends State<UserListScreen> {
                             children: [
                               CircleAvatar(
                                 radius: 42,
-                                child: ClipOval( // ✅ Ensures the image stays within the circle
+                                child: ClipOval(
                                   child: ImageNetwork(
                                     image: users[index]["image"] ?? "",
-                                    height: 84, // Adjusted to fit inside the CircleAvatar
+                                    height: 84,
                                     width: 84,
                                     curve: Curves.easeIn,
                                     fitWeb: BoxFitWeb.cover,
@@ -164,7 +167,9 @@ class _UserListScreenState extends State<UserListScreen> {
                     ),
                     if (widget.pageType == "primary")
                       InkWell(
-                        onTap: () => Navigator.pushNamedAndRemoveUntil(context, ValetParkingRoutes.homeRoute, (route) => false),
+                        onTap: () {
+                          _skipUserProfile();
+                        },
                         child: Text("Skip <<<", style: MyTextStyle.f16(appPrimaryColor, weight: FontWeight.bold)),
                       ),
                   ],
@@ -189,6 +194,60 @@ class _UserListScreenState extends State<UserListScreen> {
           .collection("bookings")
           .doc(widget.documentId)
           .update({"jockey": selectedJockeyName});
+      Map<String, dynamic> bookingData = bookingDoc.data() as Map<String, dynamic>;
+      BookingDetailsModel bookingDetail = BookingDetailsModel(
+        carNumber: bookingData['carNumber'] ?? '',
+        mobileNumber: bookingData['mobileNumber'] ?? '',
+        parkingSlot: bookingData['parkingSlot'] ?? '',
+        keyHolder: bookingData['keyHolder'] ?? '',
+        bookingDate: bookingData['bookingDate'] ?? '',
+        checkoutDate: bookingData['checkoutDate'] ?? '',
+        amount: bookingData['amount'] ?? '0.0',
+        totalAmount: bookingData['totalAmount'] ?? '0.0',
+        location: bookingData['location'] ?? '',
+        bookingTime: bookingData['bookingTime'] ?? '',
+        checkOutTime: bookingData['checkOutTime'] ?? '',
+        paymentMethodName: bookingData['paymentMethodName'] ?? '',
+      );
+      await acknowledgementCustomerPrinter.printBookingTicket(bookingDetail, context);
+
+      if (widget.pageType == "primary") {
+        _showBookingSuccessDialog(MediaQuery.of(context).size);
+      } else {
+        Navigator.pop(context);
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("No matching booking found."),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+  Future<void> _skipUserProfile() async {
+    DocumentSnapshot bookingDoc = await FirebaseFirestore.instance
+        .collection("bookings")
+        .doc(widget.documentId)
+        .get();
+
+    if (bookingDoc.exists) {
+      Map<String, dynamic> bookingData = bookingDoc.data() as Map<String, dynamic>;
+      BookingDetailsModel bookingDetail = BookingDetailsModel(
+        carNumber: bookingData['carNumber'] ?? '',
+        mobileNumber: bookingData['mobileNumber'] ?? '',
+        parkingSlot: bookingData['parkingSlot'] ?? '',
+        keyHolder: bookingData['keyHolder'] ?? '',
+        bookingDate: bookingData['bookingDate'] ?? '',
+        checkoutDate: bookingData['checkoutDate'] ?? '',
+        amount: bookingData['amount'] ?? '0.0',
+        totalAmount: bookingData['totalAmount'] ?? '0.0',
+        location: bookingData['location'] ?? '',
+        bookingTime: bookingData['bookingTime'] ?? '',
+        checkOutTime: bookingData['checkOutTime'] ?? '',
+        paymentMethodName: bookingData['paymentMethodName'] ?? '',
+      );
+      await acknowledgementCustomerPrinter.printBookingTicket(bookingDetail, context);
 
       if (widget.pageType == "primary") {
         _showBookingSuccessDialog(MediaQuery.of(context).size);

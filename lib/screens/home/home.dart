@@ -247,7 +247,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     String formattedDate = DateFormat('dd-MM-yyyy').format(now);
                                     String formattedTime = DateFormat('HH:mm a').format(now);
                                     debugPrint('documentId:${streamSnapshot.data!.docs[index].id}');
-
+                                    debugPrint("documentId': $streamSnapshot.data!.docs[index].id,'carNo': ${car['carNo']},'mobileNo': car['mobileNo'],'parkingSlot': ${car['parkingSlot']},'keyHolder': ${car['keyHolder']},'bookingTime': ${car['startTime']},'bookingDate': ${car['date']},'checkoutTime': ${formattedTime},'checkoutDate': $formattedDate,'amount':${ car['amount']},'chargeBay': ${car['chargeBay']} ?? "",'location': ${car['location']} ?? "",'paymentMethodName':${car['paymentMethodName']} ?? "",");
                                     Navigator.pushNamed(
                                       context,
                                       ValetParkingRoutes.checkoutRoute,

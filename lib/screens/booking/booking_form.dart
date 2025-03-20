@@ -47,9 +47,16 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
         locations = snapshot.docs;
         if (locations.isNotEmpty) {
           selectedLocation = locations.first.data()['name'];
-          selectedChargeBay = List<String>.from(locations.first.data()['chargeBay']);
-          amount = locations.first.data()['price'];
-          updateBookingType(selectedChargeBay?.first);
+
+          // Extract the chargeBay data
+          var chargeBayData = locations.first.data()['chargeBay'];
+          if (chargeBayData != null && chargeBayData is Map) {
+            selectedChargeBay = List<String>.from(chargeBayData.keys); // Extracting keys properly
+          }
+
+          // Set amount based on the chargeBay (default to Day)
+          amount = chargeBayData["Day"]?.toString() ?? "0";  // Default value if not found
+          updateBookingType(selectedChargeBay!.first); // Update the booking type based on the first chargeBay
         }
       });
     } catch (e) {
@@ -60,15 +67,25 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
 
   void updateBookingType(String? chargeBay) {
     if (chargeBay != null) {
-      if (chargeBay.toLowerCase().contains("hour")) {
-        selectedBookingType = BookingType.hourWise;
-      } else if (chargeBay.toLowerCase().contains("day")) {
+      var selectedLocationData = locations.firstWhere((loc) => loc["name"] == selectedLocation);
+      var chargeBayData = selectedLocationData["chargeBay"];
+
+      if (chargeBay.toLowerCase() == "day") {
+        amount = chargeBayData["Day"]?.toString(); // Set amount for Day (e.g., "50")
         selectedBookingType = BookingType.dayWise;
-      } else {
-        selectedBookingType = null;
+      } else if (chargeBay.toLowerCase() == "hour") {
+        // If Hour is selected, set amount based on "Two hours" and "Subsequent"
+        var twoHours = chargeBayData["Hour"]?["Two hours"]?.toString() ?? "0";
+        var subsequent = chargeBayData["Hour"]?["Subsequent"]?.toString() ?? "0";
+
+        amount = "$twoHours / $subsequent"; // Concatenate the two values
+        selectedBookingType = BookingType.hourWise;
       }
     }
   }
+
+
+
 
 
   @override
@@ -110,64 +127,29 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
                     verticalSpace(height: 10),
                     locations.isEmpty
                         ? const Center(child: CircularProgressIndicator(color: appPrimaryColor,))
-                        : DropdownButtonHideUnderline(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: appCardColor,
-                          border: Border.all(
-                              color: Colors.white.withOpacity(0.2)),
-                          borderRadius: BorderRadius.circular(25.0),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.2),
-                              offset: const Offset(-5, -5),
-                              blurRadius: 10,
-                            ),
-                            BoxShadow(
-                              color: Colors.black.withOpacity(0.1),
-                              offset: const Offset(5, 5),
-                              blurRadius: 10,
-                            ),
-                          ],
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 65, vertical: 10),
-                          child: SizedBox(
-                            width:
-                            MediaQuery.of(context).size.width * 0.55,
-                            child: DropdownButton<String>(
-                              value: selectedLocation,
-                              isExpanded: true,
-                              icon: const Icon(Icons.arrow_drop_down,
-                                  color: Colors.white),
-                              dropdownColor: appCardColor,
-                              style: MyTextStyle.f16(appPrimaryColor),
-                              items: locations.map((doc) {
-                                String hotelName =
-                                    doc.data()['name'] ?? "";
-                                return DropdownMenuItem<String>(
-                                  value: hotelName,
-                                  child: Text(hotelName,
-                                      textAlign: TextAlign.center),
-                                );
-                              }).toList(),
-                              onChanged: (value) {
-                                setState(() {
-                                  selectedLocation = value!;
-                                  var selectedLocationData = locations.firstWhere((loc) => loc["name"] == value);
-                                  selectedChargeBay = List<String>.from(selectedLocationData["chargeBay"]);
-                                  amount=selectedLocationData["price"];
-                                  selectedBookingType = null;
-                                });
-                              },
-
-
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
+                        :DropdownButton<String>(
+                      value: selectedLocation,
+                      isExpanded: true,
+                      icon: const Icon(Icons.arrow_drop_down, color: Colors.white),
+                      dropdownColor: appCardColor,
+                      style: MyTextStyle.f16(appPrimaryColor),
+                      items: locations.map((doc) {
+                        String hotelName = doc.data()['name'] ?? "";
+                        return DropdownMenuItem<String>(
+                          value: hotelName,
+                          child: Text(hotelName, textAlign: TextAlign.center),
+                        );
+                      }).toList(),
+                      onChanged: (value) {
+                        setState(() {
+                          selectedLocation = value!;
+                          var selectedLocationData = locations.firstWhere((loc) => loc["name"] == value);
+                          selectedChargeBay = List<String>.from(selectedLocationData["chargeBay"].keys); // Extracting keys properly
+                          selectedBookingType = null;
+                        });
+                      },
+                    )
+                    ,
                   ],
                 ),
               ),
@@ -221,13 +203,13 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
                       onChanged: (value) {
                         setState(() {
                           selectedChargeBayOption = value;
-                          updateBookingType(value);
+                          updateBookingType(value); // Update amount based on selected chargeBay
                         });
                       },
                       activeColor: appPrimaryColor,
                     );
                   }).toList(),
-                ),
+                )
               ],
               verticalSpace(height: size.height * 0.05),
               ElevatedButton(
@@ -252,12 +234,14 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
                     );
                     return;
                   }
-                  if (selectedChargeBayOption== null ) {
+
+                  if (selectedChargeBayOption == null) {
                     ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text("Please select a charge bay"))
                     );
                     return;
                   }
+
                   if (selectedLocation == null) {
                     ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text("Please select a location"))
@@ -287,6 +271,7 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
                       });
                       return;
                     }
+
                     SharedPreferences prefs = await SharedPreferences.getInstance();
                     String? username = prefs.getString('perfs');
                     Map<String, dynamic> bookingData = {
@@ -296,15 +281,15 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
                       "keyHolder": selectedKeyHolder == "No Available Holder" ? "" : selectedKeyHolder,
                       "chargeBay": selectedChargeBayOption,
                       "checkIn": FieldValue.serverTimestamp(),
-                      "amount": amount,
+                      "amount": amount, // This will dynamically update the amount based on selection
                       "slot": "",
                       "userProfile": username,
-                      "jockey":"",
+                      "jockey": "",
                       "checkout": "",
                       "totalHours": "",
                       "totalAmount": "",
-                      "paymentStatus":"",
-                      "paymentMethodName":""
+                      "paymentStatus": "",
+                      "paymentMethodName": ""
                     };
 
                     // Save Booking Data
@@ -343,7 +328,6 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
                       }
                     }
 
-
                     Navigator.pushNamed(
                       context,
                       ValetParkingRoutes.baySelectRoute,
@@ -363,15 +347,156 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
                     isLoading = false;
                   });
                 },
-
-
                 child: isLoading
                     ? const CircularProgressIndicator(color: Colors.white)
                     : const Text(
                   "Next",
                   style: TextStyle(fontSize: 18, color: Colors.white),
                 ),
-              ),
+              )
+
+              // ElevatedButton(
+              //   style: ElevatedButton.styleFrom(
+              //     backgroundColor: const Color(0xFF00A896),
+              //     minimumSize: const Size(double.infinity, 50),
+              //     shape: RoundedRectangleBorder(
+              //       borderRadius: BorderRadius.circular(12),
+              //     ),
+              //   ),
+              //   onPressed: () async {
+              //     if (carNo.text.isEmpty) {
+              //       ScaffoldMessenger.of(context).showSnackBar(
+              //           const SnackBar(content: Text("Please enter your Car Number"))
+              //       );
+              //       return;
+              //     }
+              //
+              //     if (mobileNo.text.isEmpty ) {
+              //       ScaffoldMessenger.of(context).showSnackBar(
+              //           const SnackBar(content: Text("Please enter your Mobile Number"))
+              //       );
+              //       return;
+              //     }
+              //     if (selectedChargeBayOption== null ) {
+              //       ScaffoldMessenger.of(context).showSnackBar(
+              //           const SnackBar(content: Text("Please select a charge bay"))
+              //       );
+              //       return;
+              //     }
+              //     if (selectedLocation == null) {
+              //       ScaffoldMessenger.of(context).showSnackBar(
+              //           const SnackBar(content: Text("Please select a location"))
+              //       );
+              //       return;
+              //     }
+              //
+              //     debugPrint('key value : ${selectedKeyHolder == "No Available Holder" ? "No Available Holder" : selectedKeyHolder}');
+              //     setState(() {
+              //       isLoading = true;
+              //     });
+              //
+              //     try {
+              //       //  Check if the car is already parked
+              //       QuerySnapshot existingBookings = await FirebaseFirestore.instance
+              //           .collection("bookings")
+              //           .where("carNumber", isEqualTo: carNo.text)
+              //           .where("checkout", isEqualTo: "")
+              //           .get();
+              //
+              //       if (existingBookings.docs.isNotEmpty) {
+              //         ScaffoldMessenger.of(context).showSnackBar(
+              //             const SnackBar(content: Text("This car is already parked!"))
+              //         );
+              //         setState(() {
+              //           isLoading = false;
+              //         });
+              //         return;
+              //       }
+              //       SharedPreferences prefs = await SharedPreferences.getInstance();
+              //       String? username = prefs.getString('perfs');
+              //       Map<String, dynamic> bookingData = {
+              //         "location": selectedLocation,
+              //         "carNumber": carNo.text,
+              //         "mobileNumber": "+60${mobileNo.text}",
+              //         "keyHolder": selectedKeyHolder == "No Available Holder" ? "" : selectedKeyHolder,
+              //         "chargeBay": selectedChargeBayOption,
+              //         "checkIn": FieldValue.serverTimestamp(),
+              //         "amount": amount,
+              //         "slot": "",
+              //         "userProfile": username,
+              //         "jockey":"",
+              //         "checkout": "",
+              //         "totalHours": "",
+              //         "totalAmount": "",
+              //         "paymentStatus":"",
+              //         "paymentMethodName":""
+              //       };
+              //
+              //       // Save Booking Data
+              //       DocumentReference bookingRef = await FirebaseFirestore.instance.collection("bookings").add(bookingData);
+              //       String documentId = bookingRef.id;
+              //       print("Booking saved successfully");
+              //
+              //       //  Update Key Holder Availability in Firestore
+              //       DocumentReference keyHolderDocRef = FirebaseFirestore.instance
+              //           .collection("key_holders")
+              //           .doc(selectedLocation);
+              //
+              //       DocumentSnapshot keyHolderSnapshot = await keyHolderDocRef.get();
+              //
+              //       if (keyHolderSnapshot.exists) {
+              //         Map<String, dynamic> keyHolderData =
+              //         keyHolderSnapshot.data() as Map<String, dynamic>;
+              //
+              //         if (keyHolderData.containsKey("holders") && keyHolderData["holders"] is List) {
+              //           List<dynamic> holdersList = keyHolderData["holders"];
+              //
+              //           if (selectedKeyHolder != null && selectedKeyHolder != "No Available Holder" && selectedKeyHolder!.isNotEmpty) {
+              //             int holderIndex = holdersList.indexWhere((holder) => holder["name"] == selectedKeyHolder);
+              //
+              //             if (holderIndex != -1) {
+              //               holdersList[holderIndex]["available"] = false;
+              //             }
+              //           } else {
+              //             for (var holder in holdersList) {
+              //               holder["available"] = true;
+              //             }
+              //           }
+              //           // Update Firestore document
+              //           await keyHolderDocRef.update({"holders": holdersList});
+              //           print("Key holder availability updated successfully.");
+              //         }
+              //       }
+              //
+              //
+              //       Navigator.pushNamed(
+              //         context,
+              //         ValetParkingRoutes.baySelectRoute,
+              //         arguments: {
+              //           "locationName": selectedLocation,
+              //           "pageType": "primary",
+              //           "documentId": documentId
+              //         },
+              //       );
+              //     } catch (e) {
+              //       print("Error saving booking: $e");
+              //       ScaffoldMessenger.of(context).showSnackBar(
+              //           const SnackBar(content: Text("Failed to save booking"))
+              //       );
+              //     }
+              //     setState(() {
+              //       isLoading = false;
+              //     });
+              //   },
+              //
+              //
+              //   child: isLoading
+              //       ? const CircularProgressIndicator(color: Colors.white)
+              //       : const Text(
+              //     "Next",
+              //     style: TextStyle(fontSize: 18, color: Colors.white),
+              //   ),
+              // ),
             ],
           ),
         ),
