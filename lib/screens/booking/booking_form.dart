@@ -10,7 +10,7 @@ import '../../reusable/widget/text_field.dart';
 import '../key_holder/widget/key_holder_design.dart';
 
 
-enum BookingType { dayWise, hourWise }
+enum BookingType { dayWise, hourWise,flateWise }
 
 class BookingFormScreen extends StatefulWidget {
   @override
@@ -31,6 +31,8 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
   String? amount;
   String? selectedChargeBayOption;
   BookingType? selectedBookingType;
+  String? selectedFlatAmount;
+
 
   @override
   void initState() {
@@ -71,16 +73,21 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
       var chargeBayData = selectedLocationData["chargeBay"];
 
       if (chargeBay.toLowerCase() == "day") {
-        amount = chargeBayData["Day"]?.toString(); // Set amount for Day (e.g., "50")
+        amount = chargeBayData["Day"]?.toString();
         selectedBookingType = BookingType.dayWise;
       } else if (chargeBay.toLowerCase() == "hour") {
-        // If Hour is selected, set amount based on "Two hours" and "Subsequent"
         var twoHours = chargeBayData["Hour"]?["Two hours"]?.toString() ?? "0";
         var subsequent = chargeBayData["Hour"]?["Subsequent"]?.toString() ?? "0";
 
-        amount = "$twoHours / $subsequent"; // Concatenate the two values
+        amount = "$twoHours / $subsequent";
         selectedBookingType = BookingType.hourWise;
       }
+      else if (chargeBay.toLowerCase() == "flate") {
+        selectedBookingType = BookingType.flateWise;
+        amount = null;
+        selectedFlatAmount = null;
+      }
+      debugPrint("ChargeBay: $chargeBay, Amount: $amount");
     }
   }
 
@@ -195,22 +202,57 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
               verticalSpace(height: size.height * 0.03),
               if (selectedChargeBay != null) ...[
                 Column(
-                  children: selectedChargeBay!.map((chargeBay) {
-                    return RadioListTile<String>(
-                      title: Text(chargeBay, style: const TextStyle(color: Colors.white)),
-                      value: chargeBay,
-                      groupValue: selectedChargeBayOption,
-                      onChanged: (value) {
-                        setState(() {
-                          selectedChargeBayOption = value;
-                          updateBookingType(value); // Update amount based on selected chargeBay
-                        });
-                      },
-                      activeColor: appPrimaryColor,
+                  children: selectedChargeBay!.reversed.map((chargeBayType) {
+                    var selectedLocationData = locations.firstWhere((loc) => loc["name"] == selectedLocation);
+                    var chargeBayData = selectedLocationData["chargeBay"];
+                    dynamic chargeBayValue = chargeBayData[chargeBayType];
+
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        RadioListTile<String>(
+                          title: Text(chargeBayType, style: const TextStyle(color: Colors.white)),
+                          value: chargeBayType,
+                          groupValue: selectedChargeBayOption,
+                          onChanged: (value) {
+                            setState(() {
+                              selectedChargeBayOption = value;
+                              updateBookingType(value);
+                            });
+                          },
+                          activeColor: appPrimaryColor,
+                        ),
+                        if (chargeBayType.toLowerCase() == "flate" &&
+                            selectedChargeBayOption?.toLowerCase() == "flate" &&
+                            chargeBayValue is List) ...[
+                          verticalSpace(height: 10),
+                          Padding(
+                            padding: const EdgeInsets.only(left: 50),
+                            child: Column(
+                              children: chargeBayValue.map<Widget>((flatValue) {
+                                return RadioListTile<String>(
+                                  title: Text("RM$flatValue", style: const TextStyle(color: Colors.white)),
+                                  value: flatValue,
+                                  groupValue: selectedFlatAmount,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      selectedFlatAmount = value;
+                                      amount = value;
+                                      debugPrint("Flat selected amount: $amount");
+                                    });
+                                  },
+                                  activeColor: appPrimaryColor,
+                                );
+                              }).toList(),
+                            ),
+                          ),
+                        ],
+                      ],
                     );
                   }).toList(),
-                )
+                ),
               ],
+
               verticalSpace(height: size.height * 0.05),
               ElevatedButton(
                 style: ElevatedButton.styleFrom(
@@ -241,13 +283,19 @@ class _BookingFormScreenState extends State<BookingFormScreen> {
                     );
                     return;
                   }
-
-                  if (selectedLocation == null) {
+                  if (selectedChargeBayOption == 'Flate' && selectedFlatAmount == null) {
                     ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text("Please select a location"))
+                        const SnackBar(content: Text("Please select a Flate Rate"))
                     );
                     return;
                   }
+                  if (selectedChargeBayOption == null) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Please select a charge bay"))
+                    );
+                    return;
+                  }
+
 
                   debugPrint('key value : ${selectedKeyHolder == "No Available Holder" ? "No Available Holder" : selectedKeyHolder}');
                   setState(() {

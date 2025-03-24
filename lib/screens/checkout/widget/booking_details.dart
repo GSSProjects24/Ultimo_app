@@ -44,10 +44,10 @@ class BookingDetails extends StatelessWidget {
           DetailRow(icon: Icons.local_parking, title: "Parking Bay:", value: "$parkingSlot"),
           DetailRow(icon: Icons.vpn_key, title: "Key Holder:", value: keyHolder),
           DetailRow(icon: Icons.location_on, title: "Location:", value: location),
-          if(chargeBay =="Day")
+          if(chargeBay !="Hour")
           DetailRow(icon: Icons.savings, title: "Booking Time:", value: checkInTime),
           DetailRow(icon: Icons.date_range, title: "Booking Date:", value: bookingDate),
-          if(chargeBay =="Day")
+          if(chargeBay !="Hour")
           DetailRow(icon: Icons.savings, title: "Checkout Time:", value: checkOutTime),
           DetailRow(icon: Icons.calendar_today, title: "Checkout Date:", value: checkoutDate),
           DetailRow(icon: Icons.savings, title: "Amount:", value: amount),

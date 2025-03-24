@@ -6,6 +6,7 @@ import 'package:imin_printer_example/screens/printer/Bookingdetail_print.dart';
 import 'package:imin_printer_example/screens/printer/acknowledgement_customer_print.dart';
 import 'package:imin_printer_example/screens/printer/report_print.dart';
 import 'package:imin_printer_example/screens/user_profile_select/widget/success_dialogue.dart';
+import 'package:intl/intl.dart';
 
 import '../../Routes/route.dart';
 import '../../reusable/color.dart';
@@ -243,10 +244,11 @@ class _UserListScreenState extends State<UserListScreen> {
         amount: bookingData['amount'] ?? '0.0',
         totalAmount: bookingData['totalAmount'] ?? '0.0',
         location: bookingData['location'] ?? '',
-        bookingTime: bookingData['bookingTime'] ?? '',
+        bookingTime: DateFormat('HH:mm a').format(bookingData['checkIn'].toDate()),
         checkOutTime: bookingData['checkOutTime'] ?? '',
         paymentMethodName: bookingData['paymentMethodName'] ?? '',
       );
+      debugPrint('fff${bookingData['checkIn'] ?? ''}');
       await acknowledgementCustomerPrinter.printBookingTicket(bookingDetail, context);
 
       if (widget.pageType == "primary") {

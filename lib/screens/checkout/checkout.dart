@@ -96,7 +96,7 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
         int extraHours = hours - 2;
         return initialRate + (extraHours * subsequentRate);
       }
-    } else if (widget.chargeBay == "Day") {
+    } else {
       double initialRate = double.tryParse(widget.amount ) ??0.0;
       DateTime checkInDate = DateFormat('dd-MM-yyyy').parse(widget.bookingDate);
       DateTime checkOutDate = DateFormat('dd-MM-yyyy').parse(widget.checkoutDate);
@@ -116,6 +116,12 @@ class _CheckoutScreenState extends State<CheckoutScreen> {
       int hours = difference.inHours + (difference.inMinutes % 60 > 0 ? 1 : 0);
       return hours.toString();
     } else if (widget.chargeBay == "Day") {
+      DateTime checkInDate = DateFormat('dd-MM-yyyy').parse(widget.bookingDate);
+      DateTime checkOutDate = DateFormat('dd-MM-yyyy').parse(widget.checkoutDate);
+      int days = checkOutDate.difference(checkInDate).inDays + 1;
+      return days.toString();
+    }
+    else if (widget.chargeBay == "Flate") {
       DateTime checkInDate = DateFormat('dd-MM-yyyy').parse(widget.bookingDate);
       DateTime checkOutDate = DateFormat('dd-MM-yyyy').parse(widget.checkoutDate);
       int days = checkOutDate.difference(checkInDate).inDays + 1;
